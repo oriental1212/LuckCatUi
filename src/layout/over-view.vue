@@ -38,17 +38,15 @@
                             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
                             multiple
                         >
-                            <el-icon class="el-icon--upload"
-                                ><upload-filled
-                            /></el-icon>
+                            <el-icon class="el-icon--upload">
+                                <upload-filled/>
+                            </el-icon>
                             <div class="el-upload__text">
-                                Drop file here or <em>click to upload</em>
+                                <div style="font-size: 30px; color: #ffffff; margin-bottom: 10px;">拖放图片到这里上传</div>
+                                <span style="font-size: 1em; color: #ffffff;">或者 <em><el-icon><ZoomIn /></el-icon>浏览您的计算器</em></span>
+                                <br>
+                                <div style="font-size: .79rem; margin-top: 5px;">JPG JPEG PNG BMP GIF</div>
                             </div>
-                            <template #tip>
-                                <div class="el-upload__tip">
-                                    jpg/png files with a size less than 500kb
-                                </div>
-                            </template>
                         </el-upload>
                     </div>
                 </transition>
@@ -60,7 +58,7 @@
 </template>
 
 <script setup>
-import { UploadFilled, Right } from "@element-plus/icons-vue";
+import { UploadFilled, Right, ZoomIn } from "@element-plus/icons-vue";
 import { ref } from "vue";
 
 const uploadstate = ref(false);
@@ -90,7 +88,8 @@ body,
     background-color: #2a2a32;
 }
 
-.el-upload-dragger {
+.upload >>> .el-upload-dragger {
     background-color: #2a2a32;
+    border-style: none;
 }
 </style>

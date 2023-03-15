@@ -16,6 +16,11 @@ const routes = [
             },
         ],
     },
+    {
+        path: "/background",
+        name: "background",
+        component: () => import("@/layout/back-ground.vue"),
+    }
 ];
 
 const router = createRouter({
