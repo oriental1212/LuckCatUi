@@ -1,10 +1,7 @@
-<script setup>
-import OverView from './components/layout/OverView.vue';
-</script>
+<script setup></script>
 
 <template>
     <router-view></router-view>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

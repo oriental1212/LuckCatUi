@@ -1,27 +1,27 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
     {
         path: "/",
-        name: 'overview',
-        component: () => import('@/components/layout/OverView.vue'),
+        name: "overview",
+        component: () => import("@/layout/over-view.vue"),
         children: [
             {
-                path: '/home',
-                name: 'home',
-                component: () => import('@/components/view/home.vue'),
+                path: "/home",
+                name: "home",
+                component: () => import("@/views/home/index.vue"),
                 meta: {
-                    title: '主页'
-                }
+                    title: "主页",
+                },
             },
-        ]
-    }
-]
+        ],
+    },
+];
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
-})
+    routes,
+});
 
 //导出路由
-export default router
+export default router;
