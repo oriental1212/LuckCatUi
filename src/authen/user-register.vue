@@ -1,5 +1,7 @@
 <template>
-    hello
+    <router-view>
+        register
+    </router-view>
 </template>
 
 <script setup>

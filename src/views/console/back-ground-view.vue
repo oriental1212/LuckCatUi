@@ -1,10 +1,12 @@
 <template>
     <router-view>
-        你好
+        nihao
     </router-view>
 </template>
 
 <script setup>
 </script>
 
-<style></style>
+<style>
+
+</style>
