@@ -88,7 +88,7 @@ body,
     background-color: #2a2a32;
 }
 
-.upload >>> .el-upload-dragger {
+.upload :deep(.el-upload-dragger) {
     background-color: #2a2a32;
     border-style: none;
 }
