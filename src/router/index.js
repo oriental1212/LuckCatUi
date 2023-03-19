@@ -5,6 +5,7 @@ const routes = [
         path: "/",
         redirect: "/home",
     },
+    // 用户界面布局router
     {
         path: "/",
         name: "overview",
@@ -20,6 +21,7 @@ const routes = [
             },
         ],
     },
+    // 管理界面布局router
     {
         path: "/background",
         name: "background",
@@ -31,6 +33,22 @@ const routes = [
                 component: () => import("@/views/console/back-ground-view.vue"),
                 meta: {
                     title: "总览",
+                }
+            },
+            {
+                path: "/background/photo-classify",
+                name: "photo-classify",
+                component: () => import("@/views/console/photo/photo-classify.vue"),
+                meta: {
+                    title: "图片分类",
+                }
+            },
+            {
+                path: "/background/photo-view",
+                name: "photo-view",
+                component: () => import("@/views/console/photo/photo-view.vue"),
+                meta: {
+                    title: "我的图库",
                 }
             }
         ]

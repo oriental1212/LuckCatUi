@@ -4,19 +4,25 @@
             <!-- 侧边菜单 -->
             <el-aside width="200px">
                 <el-menu
-                    default-active="background/backgroundview"
+                    default-active="backgroundview"
                     :unique-opened="true"
                     class="el-menu-vertical-demo"
                     :router="true"
                 >
-                    <el-menu-item index="background/backgroundview">
+                    <el-menu-item index="backgroundview">
                         <el-icon><location /></el-icon>
                         <span>总览</span>
                     </el-menu-item>
-                    <el-menu-item index="2">
-                        <el-icon><icon-menu /></el-icon>
-                        <span>个人中心</span>
-                    </el-menu-item>
+                    <el-sub-menu index="photo">
+                        <template #title>
+                            <el-icon><icon-menu /></el-icon>
+                            <span>个人中心</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="photo-view">我的图库</el-menu-item>
+                            <el-menu-item index="photo-classify">图库分类</el-menu-item>
+                        </el-menu-item-group>
+                    </el-sub-menu>
                     <el-menu-item index="3">
                         <el-icon><document /></el-icon>
                         <span>用户管理</span>
