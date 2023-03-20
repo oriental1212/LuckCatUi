@@ -3,20 +3,28 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
         path: "/",
-        redirect: "/home",
+        redirect: "/user/user-home",
     },
     // 用户界面布局router
     {
-        path: "/",
-        name: "overview",
-        component: () => import("@/layout/over-view.vue"),
+        path: "/user",
+        name: "useroverview",
+        component: () => import("@/layout/user-over-view.vue"),
         children: [
             {
-                path: "/home",
-                name: "home",
-                component: () => import("@/views/home/index.vue"),
+                path: "/user/user-home",
+                name: "user-home",
+                component: () => import("@/views/user-view/user-home.vue"),
                 meta: {
                     title: "主页",
+                },
+            },
+            {
+                path: "/user/photo-view",
+                name: "photo-view",
+                component: () => import("@/views/user-view/photo-view.vue"),
+                meta: {
+                    title: "图库",
                 },
             },
         ],
@@ -24,8 +32,8 @@ const routes = [
     // 管理界面布局router
     {
         path: "/background",
-        name: "background",
-        component: () => import("@/layout/back-ground.vue"),
+        name: "adminoverview",
+        component: () => import("@/layout/admin-over-view.vue"),
         children: [
             {
                 path: "/background/backgroundview",
@@ -35,22 +43,6 @@ const routes = [
                     title: "总览",
                 }
             },
-            {
-                path: "/background/photo-classify",
-                name: "photo-classify",
-                component: () => import("@/views/console/photo/photo-classify.vue"),
-                meta: {
-                    title: "图片分类",
-                }
-            },
-            {
-                path: "/background/photo-view",
-                name: "photo-view",
-                component: () => import("@/views/console/photo/photo-view.vue"),
-                meta: {
-                    title: "我的图库",
-                }
-            }
         ]
     },
     {

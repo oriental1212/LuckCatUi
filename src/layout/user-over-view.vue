@@ -1,32 +1,26 @@
 <template>
     <div class="common-layout">
         <el-container style="height: 100%">
-            <el-header style="padding: 0px; background: #2a2a32">
-                <el-row
-                    :gutter="5"
-                    justify="end"
-                    align="middle"
-                    style="height: 100%; width: 100%"
+            <el-header>
+                <el-menu
+                    :default-active="user-home"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    background-color="#2a2a32"
+                    :router="true"
+                    @select="select"
+                    text-color="#fff"
                 >
-                    <el-col :span="1.25">
-                        <el-button
-                            color="#000000"
-                            link
-                            :icon="UploadFilled"
-                            @click="uplaodclick"
-                            >上传</el-button
-                        >
-                    </el-col>
-                    <el-col :span="1.25">
-                        <el-button color="#000000" link :icon="Right"
-                            >登录</el-button
-                        >
-                    </el-col>
-                    <el-col :span="0.5"> </el-col>
-                </el-row>
+                    <div class="logo">LuckCat</div>
+                    <el-menu-item index="photo-view">图库</el-menu-item>
+                    <el-menu-item index="">管理</el-menu-item>
+                    <div style="flex-grow: 0.953;"></div>
+                    <el-menu-item index="user-home"><el-icon><UploadFilled/></el-icon>上传</el-menu-item>
+                    <el-menu-item index="login"><el-icon><Right/></el-icon>登录</el-menu-item>
+                </el-menu>
             </el-header>
-
             <el-main style="padding: 0px">
+                <!-- 上传模块 -->
                 <transition
                     enter-active-class="animate__animated animate__fadeInDown animate__faster"
                     leave-active-class="animate__animated animate__fadeOutUp"
@@ -60,12 +54,26 @@
 <script setup>
 import { UploadFilled, Right, ZoomIn } from "@element-plus/icons-vue";
 import { ref } from "vue";
+import router from "../router";
 
 const uploadstate = ref(false);
-
+// 上传框显示函数
 const uplaodclick = () => {
     uploadstate.value = !uploadstate.value;
 };
+// 登录函数
+const login = () => {
+    router.push({path: "/login"})
+}
+// 菜单选择回调
+const select = (key) => {
+    if(key == "user-home"){
+        uplaodclick()
+    }
+    if(key == "login"){
+        login()
+    }
+}
 </script>
 
 <style scoped>
@@ -91,5 +99,21 @@ body,
 .upload :deep(.el-upload-dragger) {
     background-color: #2a2a32;
     border-style: none;
+}
+.el-header{
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+    padding: 0px 50px; 
+    background: #2a2a32;
+}
+.el-menu-demo{
+    border-bottom: 0px;
+}
+.logo{
+    padding-right: 30px;
+    color: white;
+    text-align: center;
+    height: 58px;
+    line-height: 58px;
+    border-right: 20px;
 }
 </style>
