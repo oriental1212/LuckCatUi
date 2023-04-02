@@ -38,9 +38,25 @@ const routes = [
             {
                 path: "/background/backgroundview",
                 name: "backgroundview",
-                component: () => import("@/views/console/back-ground-view.vue"),
+                component: () => import("@/views/admin-view/back-ground-view.vue"),
                 meta: {
                     title: "总览",
+                }
+            },
+            {
+                path: "/background/usercontroller",
+                name: "usercontroller",
+                component: () => import("@/views/admin-view/user-controller.vue"),
+                meta: {
+                    title: "用户管理",
+                }
+            },
+            {
+                path: "/background/objectstorage",
+                name: "objectstorage",
+                component: () => import("@/views/admin-view/object-storage.vue"),
+                meta: {
+                    title: "SSO管理",
                 }
             },
         ]

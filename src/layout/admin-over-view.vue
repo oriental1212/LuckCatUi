@@ -2,7 +2,7 @@
     <div class="common-layout">
         <el-container>
             <!-- 侧边菜单 -->
-            <el-aside width="200px">
+            <el-aside width="180px">
                 <el-menu
                     default-active="backgroundview"
                     :unique-opened="true"
@@ -13,23 +13,13 @@
                         <el-icon><location /></el-icon>
                         <span>总览</span>
                     </el-menu-item>
-                    <el-sub-menu index="photo">
-                        <template #title>
-                            <el-icon><icon-menu /></el-icon>
-                            <span>个人中心</span>
-                        </template>
-                        <el-menu-item-group>
-                            <el-menu-item index="photo-view">我的图库</el-menu-item>
-                            <el-menu-item index="photo-classify">图库分类</el-menu-item>
-                        </el-menu-item-group>
-                    </el-sub-menu>
-                    <el-menu-item index="3">
+                    <el-menu-item index="usercontroller">
                         <el-icon><document /></el-icon>
                         <span>用户管理</span>
                     </el-menu-item>
-                    <el-menu-item index="4">
+                    <el-menu-item index="objectstorage">
                         <el-icon><setting /></el-icon>
-                        <span>个性化</span>
+                        <span>SSO管理</span>
                     </el-menu-item>
                     <el-menu-item index="5">
                         <el-icon><setting /></el-icon>
@@ -72,7 +62,7 @@
 </template>
 
 <script setup>
-import { Document, Menu as IconMenu, Location, Setting, ArrowDown} from '@element-plus/icons-vue'
+import { Document, Location, Setting, ArrowDown} from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '../router';
 
@@ -108,7 +98,8 @@ const handleCommand = ( command ) => {
 }
 
 .el-header {
-    background-image: linear-gradient(to top, #accbee 0%, #e7f0fd 100%);
+    background-color: #EBEEF5;
+    /* background-image: linear-gradient(to top, #accbee 0%, #e7f0fd 100%); */
 }
 
 .el-menu {

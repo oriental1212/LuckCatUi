@@ -17,8 +17,9 @@
                     <el-form-item style="flex-wrap: wrap">
                         <el-button type="primary" @click="sumbit" style="margin: 0 auto;">登录</el-button>
                     </el-form-item>
-                    <div style="text-align: center;">
-                        <span style="color: white; font-size: 13px;">注册点击<router-link :to="{name:'register'}">这里</router-link></span>
+                    <div style="text-align: center; display: flex; justify-content: space-between;">
+                        <span style="color: white; font-size: 13px;"><router-link :to="{name:'register'}">注册</router-link></span>
+                        <span style="color: white; font-size: 13px;"><router-link :to="{name:'register'}">找回密码</router-link></span>
                     </div>
                 </el-form>
             </div>
