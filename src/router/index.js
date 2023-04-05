@@ -5,6 +5,10 @@ const routes = [
         path: "/",
         redirect: "/user/user-home",
     },
+    {
+        path: "/user/background",
+        redirect: "/background/backgroundview"
+    },
     // 用户界面布局router
     {
         path: "/user",
@@ -37,7 +41,7 @@ const routes = [
         children: [
             {
                 path: "/background/backgroundview",
-                name: "backgroundview",
+                name: "background-view",
                 component: () => import("@/views/admin-view/back-ground-view.vue"),
                 meta: {
                     title: "总览",
@@ -45,7 +49,7 @@ const routes = [
             },
             {
                 path: "/background/usercontroller",
-                name: "usercontroller",
+                name: "user-controller",
                 component: () => import("@/views/admin-view/user-controller.vue"),
                 meta: {
                     title: "用户管理",
@@ -53,7 +57,7 @@ const routes = [
             },
             {
                 path: "/background/objectstorage",
-                name: "objectstorage",
+                name: "object-storage",
                 component: () => import("@/views/admin-view/object-storage.vue"),
                 meta: {
                     title: "SSO管理",

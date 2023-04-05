@@ -31,8 +31,12 @@
             <el-container>
                 <!-- 头部菜单 -->
                 <el-header>
-                    <el-row justify="end" align="middle" :gutter=10 style="margin: 0px;">
-                        <el-col :span="1">
+                    <el-row justify="end" align="middle" :gutter=25 style="margin: 0px;">
+                        <el-col :span="2.25" style="padding-left: 0px">
+                            <el-button link @click="comeback" style="font-size: larger;">LuckCat图床</el-button>
+                        </el-col>
+                        <el-col :span="18"></el-col>
+                        <el-col :span="1.5">
                             <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
                         </el-col>
                         <el-col :span="1.5">
@@ -86,6 +90,10 @@ const handleCommand = ( command ) => {
             })
     }
 }
+//返回主页
+const comeback = () => {
+    router.push({name: "user-home"})
+}
 </script>
 
 <style scoped>
@@ -116,4 +124,5 @@ const handleCommand = ( command ) => {
     width: 100%;
     margin: 0px;
 }
+
 </style>

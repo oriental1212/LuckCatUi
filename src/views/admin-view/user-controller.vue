@@ -4,6 +4,7 @@
             <el-table-column label="用户名" prop="username" />
             <el-table-column label="昵称" prop="nickname" />
             <el-table-column label="邮箱" prop="email" />
+            <el-table-column label="权限" prop="authority" />
             <el-table-column align="right">
                 <template #header>
                 <el-input v-model="search" size="small" placeholder="输入查询用户名" />
@@ -32,21 +33,25 @@ const userData = reactive([
         username: '2016-05-03',
         nickname: 'Tom',
         email: 'No. 189, Grove St, Los Angeles',
+        authority: "admin"
     },
     {
         username: '2016-05-02',
         nickname: 'John',
         email: 'No. 189, Grove St, Los Angeles',
+        authority: "user"
     },
     {
         username: '2016-05-04',
         nickname: 'Morgan',
         email: 'No. 189, Grove St, Los Angeles',
+        authority: "user"
     },
     {
         username: '2016-05-01',
         nickname: 'Jessy',
         email: 'No. 189, Grove St, Los Angeles',
+        authority: "user"
     }
 ])
 </script>

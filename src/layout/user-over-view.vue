@@ -17,7 +17,8 @@
                     <el-menu-item index="">管理</el-menu-item>
                     <div style="flex-grow: 1;"></div>
                     <el-menu-item index="user-home"><el-icon><UploadFilled/></el-icon>上传</el-menu-item>
-                    <el-menu-item index="login"><el-icon><Right/></el-icon>登录</el-menu-item>
+                    <el-menu-item index="login" v-if="loginshow"><el-icon><Right/></el-icon>登录</el-menu-item>
+                    <el-menu-item index="background" v-if="!loginshow"><el-icon><User/></el-icon>个人中心</el-menu-item>
                 </el-menu>
             </el-header>
             <el-main style="padding: 0px">
@@ -51,7 +52,7 @@
                                 <div
                                     style="font-size: 0.79rem; margin-top: 5px"
                                 >
-                                    JPG JPEG PNG BMP GIF
+                                    JPG JPEG PNG GIF
                                 </div>
                             </div>
                         </el-upload>
@@ -65,11 +66,12 @@
 </template>
 
 <script setup>
-import { UploadFilled, Right, ZoomIn } from "@element-plus/icons-vue";
+import { UploadFilled, Right, ZoomIn, User } from "@element-plus/icons-vue";
 import { ref } from "vue";
 import router from "../router";
 
 const uploadstate = ref(false);
+const loginshow = ref(false);
 // 上传框显示函数
 const uplaodclick = () => {
     uploadstate.value = !uploadstate.value;
