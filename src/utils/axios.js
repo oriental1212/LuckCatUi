@@ -17,8 +17,7 @@ request.interceptors.request.use(config => {
 //响应过滤器
 request.interceptors.response.use(
     response => {
-        console.log(response.data.data.data.tokenName)
-        if(response.data.data.data.tokenName == "LuckCat"){
+        if(response.data.data.data.tokenName){
             localStorage.LuckCat = response.data.data.data.tokenValue
         }
         let res = response.data;

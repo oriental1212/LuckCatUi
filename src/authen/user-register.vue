@@ -29,7 +29,11 @@
 <script setup>
 import { reactive } from 'vue';
 import request from '@/utils/axios';
+import { useStore } from "vuex"
+import router from '../router';
+import { ElMessage } from "element-plus";
 
+const store = useStore()
 const register = reactive({
     email: "",
     password: "",
@@ -39,7 +43,19 @@ const register = reactive({
 const sumbit = () => {
     console.log(register)
     request.post("/user/registerUser",register).then((res) => {
-        console.log(res)
+        if(res.data.code == "500"){
+            ElMessage({
+                type: "error",
+                message: res.data.data.msg
+            })
+        }else{
+            ElMessage({
+                type: "success",
+                message: "登录成功"
+            })
+            store.commit("changeloginflage")
+            router.push({name: "user-home"})
+        }
     })
 }
 </script>

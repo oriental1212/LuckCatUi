@@ -70,9 +70,12 @@ import { UploadFilled, Right, ZoomIn, User } from "@element-plus/icons-vue";
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ref } from "vue";
 import router from "../router";
+import { useStore } from "vuex"
 
 const uploadstate = ref(false);
-const loginshow = ref(true);
+const loginshow = ref();
+const store = useStore()
+loginshow.value = store.state.logoinflage
 // 上传框显示函数
 const uplaodclick = () => {
     uploadstate.value = !uploadstate.value;

@@ -88,6 +88,7 @@ const handleCommand = ( command ) => {
                     message: '登出成功',
                 })
             })
+        
     }
 }
 //返回主页
