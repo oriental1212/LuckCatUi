@@ -12,7 +12,7 @@
                         <el-input v-model="register.email" placeholder="邮箱"/>
                     </el-form-item>
                     <el-form-item prop="name">
-                        <el-input v-model="register.nickname" placeholder="昵称"/>
+                        <el-input v-model="register.username" placeholder="用户名"/>
                     </el-form-item>
                     <el-form-item prop="name">
                         <el-input v-model="register.password" placeholder="密码" type="password" show-password/>
@@ -28,15 +28,19 @@
 
 <script setup>
 import { reactive } from 'vue';
+import request from '@/utils/axios';
 
 const register = reactive({
     email: "",
     password: "",
-    nickname: ""
+    username: ""
 })
 
 const sumbit = () => {
-
+    console.log(register)
+    request.post("/user/registerUser",register).then((res) => {
+        console.log(res)
+    })
 }
 </script>
 

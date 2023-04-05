@@ -71,7 +71,7 @@ import { ref } from "vue";
 import router from "../router";
 
 const uploadstate = ref(false);
-const loginshow = ref(false);
+const loginshow = ref(true);
 // 上传框显示函数
 const uplaodclick = () => {
     uploadstate.value = !uploadstate.value;

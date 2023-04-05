@@ -19,7 +19,7 @@
                     </el-menu-item>
                     <el-menu-item index="objectstorage">
                         <el-icon><setting /></el-icon>
-                        <span>SSO管理</span>
+                        <span>OSS管理</span>
                     </el-menu-item>
                     <el-menu-item index="5">
                         <el-icon><setting /></el-icon>
