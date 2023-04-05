@@ -116,7 +116,7 @@ const urls = [
     background: url("@/public/no01.jpg");
     width: 100%;
     height: 947px;
-    position: fixed;
+    /* position: fixed; */
     background-size: cover;
     background-attachment: fixed;
 }
@@ -138,6 +138,7 @@ const urls = [
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-around;
 }
 .single_element {
     width: 192px;

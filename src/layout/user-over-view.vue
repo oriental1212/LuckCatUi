@@ -27,7 +27,7 @@
                     enter-active-class="animate__animated animate__fadeInDown animate__faster"
                     leave-active-class="animate__animated animate__fadeOutUp"
                 >
-                    <div v-show="uploadstate" class="upload">
+                    <div v-show="uploadstate" class="upload" v-click-outside= "onClickOutside">
                         <el-upload
                             class="upload-demo"
                             drag
@@ -67,6 +67,7 @@
 
 <script setup>
 import { UploadFilled, Right, ZoomIn, User } from "@element-plus/icons-vue";
+import { ClickOutside as vClickOutside } from 'element-plus'
 import { ref } from "vue";
 import router from "../router";
 
@@ -89,6 +90,10 @@ const select = (key) => {
         login();
     }
 };
+//点击上传区域外隐藏上传界面
+const onClickOutside=()=>{
+    uploadstate.value=false
+}
 </script>
 
 <style scoped>
