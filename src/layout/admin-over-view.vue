@@ -81,14 +81,12 @@ const handleCommand = ( command ) => {
                 confirmButtonText: '确定',
                 center: true,
             }
-        )
-            .then(() => {
-                ElMessage({
-                    type: 'success',
-                    message: '登出成功',
-                })
+        ).then(() => {
+            ElMessage({
+                type: 'success',
+                message: '登出成功',
             })
-        
+        })
     }
 }
 //返回主页

@@ -15,21 +15,16 @@ request.interceptors.request.use(config => {
 })
 
 //响应过滤器
-request.interceptors.response.use(
-    response => {
-        if(response.data.data.data.tokenName){
-            localStorage.LuckCat = response.data.data.data.tokenValue
-        }
-        let res = response.data;
-        // 兼容服务端返回的字符串数据
-        if (typeof res === 'string') {
-            res = res ? JSON.parse(res) : res
-        }
-        return res;
-    },
-    error => {
-        console.log("erroe"+error)
-        return Promise.reject(error)
+request.interceptors.response.use(response => {
+    let res = response.data;
+    // 兼容服务端返回的字符串数据
+    if (typeof res === 'string') {
+        res = res ? JSON.parse(res) : res
     }
+    return res;
+},error => {
+    console.log("erroe"+error)
+    return Promise.reject(error)
+}
 )
 export default request

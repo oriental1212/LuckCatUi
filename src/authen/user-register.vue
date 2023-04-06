@@ -51,7 +51,7 @@ const sumbit = () => {
         }else{
             ElMessage({
                 type: "success",
-                message: "登录成功"
+                message: "注册成功"
             })
             store.commit("changeloginflage")
             router.push({name: "user-home"})

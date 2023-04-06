@@ -9,15 +9,15 @@ const store = createStore({
     },
     mutations: {
         changeloginflage(state) {
-            state.logoinflage = false
+            state.logoinflage = !state.logoinflage
         }
     },
+    //持久化存储loginflage
     plugins: [    
         createPersistedState({      
             storage: localStorage,
             reducer(state) {        
-                return {          
-                    // 只存储state中的userData          
+                return {                
                     logoinflage: state.logoinflage
                 }      
             }  

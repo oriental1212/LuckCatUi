@@ -75,6 +75,11 @@ const routes = [
         name: "register",
         component: () => import("@/authen/user-register.vue"),
     },
+    {
+        path: "/test",
+        name: "test",
+        component: () => import("@/authen/authen-test.vue"),
+    },
 ];
 
 const router = createRouter({

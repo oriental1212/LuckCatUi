@@ -9,7 +9,7 @@
                         <span style="color: white; font-size: 26px;">LuckCat登录</span>
                     </div>
                     <el-form-item prop="name">
-                        <el-input v-model="login.email" placeholder="邮箱"/>
+                        <el-input v-model="login.account" placeholder="邮箱或用户名"/>
                     </el-form-item>
                     <el-form-item prop="name">
                         <el-input v-model="login.password" placeholder="密码" type="password" show-password/>
@@ -29,14 +29,30 @@
 
 <script setup>
 import { reactive } from 'vue';
+import request from '@/utils/axios';
+import { ElMessage } from "element-plus";
 
 const login = reactive({
-    email: "",
+    account: "",
     password: ""
 })
 
 const sumbit = () => {
-
+    console.log(login)
+    request.post("/user/loginUser",login).then((res) => {
+        if(res.data.data.tokenName == "LuckCat"){
+            ElMessage({
+                type: 'success',
+                message: '登录成功',
+            })
+        }else{
+            ElMessage({
+                type: 'error',
+                message: res.data.data.msg,
+            })
+            console.log(res)
+        }
+    })
 }
 </script>
 
