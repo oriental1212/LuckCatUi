@@ -17,7 +17,7 @@
                     <el-menu-item index="">管理</el-menu-item>
                     <div style="flex-grow: 1;"></div>
                     <el-menu-item index="user-home"><el-icon><UploadFilled/></el-icon>上传</el-menu-item>
-                    <el-menu-item index="login" v-if="loginshow"><el-icon><Right/></el-icon>登录</el-menu-item>
+                    <el-menu-item index="authen" v-if="loginshow"><el-icon><Right/></el-icon>登录</el-menu-item>
                     <el-menu-item index="background" v-if="!loginshow"><el-icon><User/></el-icon>个人中心</el-menu-item>
                 </el-menu>
             </el-header>
@@ -82,14 +82,14 @@ const uplaodclick = () => {
 };
 // 登录函数
 const login = () => {
-    router.push({ path: "/login" });
+    router.push({ path: "/authen" });
 };
 // 菜单选择回调
 const select = (key) => {
     if (key == "user-home") {
         uplaodclick();
     }
-    if (key == "login") {
+    if (key == "authen") {
         login();
     }
 };

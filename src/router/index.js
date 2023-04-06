@@ -76,9 +76,9 @@ const routes = [
         component: () => import("@/authen/user-register.vue"),
     },
     {
-        path: "/test",
-        name: "test",
-        component: () => import("@/authen/authen-test.vue"),
+        path: "/authen",
+        name: "authen",
+        component: () => import("@/authen/user-authen.vue"),
     },
 ];
 
