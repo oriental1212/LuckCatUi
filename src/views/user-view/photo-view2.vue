@@ -146,7 +146,7 @@ const urls = [
     padding-right: 50px;
     padding-top: 20px;
     width: cale(100%-100px);
-    min-height: 100vh;
+    max-height: 100vh;
     color: white;
     background-attachment: fixed;
     backdrop-filter: blur(15px);
