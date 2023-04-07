@@ -1,44 +1,44 @@
 <template>
     <router-view>
-        <div class="body">
+        <div class="authen">
             <div class="container" :class="{ 'right-panel-active': isAlive }" id="login-box">
                 <!-- 注册 -->
                 <div class="form-container sign-up-container">
                     <form>
                         <h1>注册</h1>           
                         <div class="txtb">
-                            <input type="text" ref="foucs1" @focus="foucsclick1" @blur="unfoucsclick1">
+                            <input type="text" v-model="form.register.username" ref="foucs1" @focus="foucsclick1" @blur="unfoucsclick1">
                             <span data-placeholder="Username" ></span>
                         </div>
                         <div class="txtb">
-                            <input type="email" ref="foucs2" @focus="foucsclick2" @blur="unfoucsclick2">
+                            <input type="email" v-model="form.register.email" ref="foucs2" @focus="foucsclick2" @blur="unfoucsclick2">
                             <span data-placeholder="Email" ></span>
                         </div> 
                         <div class="txtb">
-                            <input type="password" ref="foucs3" @focus="foucsclick3" @blur="unfoucsclick3">
+                            <input type="password" v-model="form.register.password" ref="foucs3" @focus="foucsclick3" @blur="unfoucsclick3">
                             <span data-placeholder="Password" ></span>
                         </div>
                         <div class="txtb">
-                            <input type="password" ref="foucs4" @focus="foucsclick4" @blur="unfoucsclick4">
+                            <input type="password" v-model="form.register.confirmpassword" ref="foucs4" @focus="foucsclick4" @blur="unfoucsclick4">
                             <span data-placeholder="Confirm Password" ></span>
                         </div>            
-                        <button>注册</button>
+                        <button @click="registerClick">注册</button>
                     </form>
                 </div>
                 <!-- 登录 -->
                 <div class="form-container sign-in-container">
-                    <form action="#">
+                    <form>
                         <h1>登录</h1>
                         <div class="txtb">
-                            <input type="email" ref="foucs5" @focus="foucsclick5" @blur="unfoucsclick5">
+                            <input type="text" v-model="form.login.account" ref="foucs5" @focus="foucsclick5" @blur="unfoucsclick5">
                             <span data-placeholder="Email or userName" ></span>
                         </div>
                         <div class="txtb">
-                            <input type="password" ref="foucs6" @focus="foucsclick6" @blur="unfoucsclick6">
+                            <input type="password" v-model="form.login.password" ref="foucs6" @focus="foucsclick6" @blur="unfoucsclick6">
                             <span data-placeholder="Password"></span>
                         </div>
-                        <a href="#">忘记密码？</a>
-                        <button>登录</button>
+                        <router-link :to="{path:'/findpassword'}">忘记密码？</router-link>
+                        <button @click="loginClick">登录</button>
                     </form>
                 </div>
 
@@ -62,7 +62,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ElMessage } from "element-plus";
+import { reactive, ref } from "vue"
+import request from "@/utils/axios";
+import router from "../router";
+import { useStore } from "vuex";
 
 const foucs1 = ref()
 const foucs2 = ref()
@@ -71,15 +75,160 @@ const foucs4 = ref()
 const foucs5 = ref()
 const foucs6 = ref()
 
+const store = useStore()
 let isAlive = ref(false)
+//校验的正则判断
+const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+const regPassword = /^(?![0-9]+$)(?![a-zA-Z]+$)/
+//滑动切换函数
 const sign = () => {
     isAlive.value = !isAlive.value
 }
+//表单数据
+const form = reactive({
+    register: {
+        username: "",
+        email: "",
+        password: "",
+        confirmpassword: ""
+    },
+    login: {
+        account: "",
+        password: ""
+    },
+    registercommite: {}
+})
+//注册事件
+const registerClick = (event) => {
+    event.preventDefault()
+    if(checkregister()){
+        request.post("/user/registerUser",form.registercommite).then((res) => {
+            console.log(res)
+            if(res.code === 500){
+                ElMessage({
+                    type: "error",
+                    message: res.msg
+                })
+            }else if(res.code === 200){
+                ElMessage({
+                    type: "success",
+                    message: "注册成功"
+                })
+                localStorage.setItem(res.data[0].tokenName,res.data[0].tokenValue)
+                localStorage.setItem("personInfo",JSON.stringify(res.data[1]))
+                store.commit("changeloginflage")
+                router.push({name:'user-home'})
+            }
+        })
+    }
+}
+//登录事件
+const loginClick = (event) => {
+    event.preventDefault()
+    if(checklogin()){
+        request.post("/user/loginUser",form.login).then((res) => {
+            console.log(res)
+            if(res.code === 500){
+                ElMessage({
+                    type: "error",
+                    message: res.msg
+                })
+            }else if(res.code === 200){
+                ElMessage({
+                    type: "success",
+                    message: "登录成功"
+                })
+                localStorage.setItem(res.data[0].tokenName,res.data[0].tokenValue)
+                localStorage.setItem("personInfo",JSON.stringify(res.data[1]))
+                store.commit("changeloginflage")
+                router.push({name:'user-home'})
+            }
+        })
+    }
+}
+//登录校验函数
+const checklogin = () => {
+    if(form.login.account === "" || form.login.password === ""){
+        ElMessage({
+            type: "error",
+            message: "选项不能为空"
+        })
+        return false
+    }
+    if(form.login.account.length < 4){
+        ElMessage({
+            type: "error",
+            message: "账户名长度不能小于4"
+        })
+        return false
+    }
+    if(form.login.password.length < 6 || form.login.password.length > 16){
+        ElMessage({
+            type: "error",
+            message: "密码长度必须处于6~16之间"
+        })
+        return false
+    }else if(!regPassword.test(form.login.password)){
+        ElMessage({
+            type: "error",
+            message: "格式错误：密码必须包含两种不同字符"
+        })
+        return false
+    }
+    return true
+}
+//注册校验函数
+const checkregister = () => {
+    if(form.register.username === "" || form.register.email === "" || form.register.password === "" || form.register.confirmpassword === ""){
+        ElMessage({
+            type: "error",
+            message: "选项不能为空"
+        })
+        return false
+    }
+    if(form.register.username.length < 4){
+        ElMessage({
+            type: "error",
+            message: "用户名长度不能小于4"
+        })
+        return false
+    }
+    if(!regEmail.test(form.register.email)){
+        ElMessage({
+            type: "error",
+            message: "邮箱格式不正确"
+        })
+        return false
+    }
+    if(form.register.password !== form.register.confirmpassword){
+        ElMessage({
+            type: "error",
+            message: "两次密码输入不同，请重新校验"
+        })
+        return false
+    }else if(form.register.password.length < 6 || form.register.password.length > 16){
+        ElMessage({
+            type: "error",
+            message: "密码长度必须处于6~16之间"
+        })
+        return false
+    }else if(!regPassword.test(form.register.password)){
+        ElMessage({
+            type: "error",
+            message: "格式错误：密码必须包含两种不同字符"
+        })
+        return false
+    }
+    form.registercommite.username = form.register.username
+    form.registercommite.email = form.register.email
+    form.registercommite.password = form.register.password
+    return true
+}
+
 // input的屎山建议别动
 //foucs1
 const foucsclick1 = () => {
     foucs1.value.className = 'focus'
-    console.log(foucs1.value.value.length)
 }
 const unfoucsclick1 = () => {
     if(foucs1.value.value.length === 0){
@@ -89,7 +238,6 @@ const unfoucsclick1 = () => {
 //foucs2
 const foucsclick2 = () => {
     foucs2.value.className = 'focus'
-    console.log(foucs2.value.value.length)
 }
 const unfoucsclick2 = () => {
     if(foucs2.value.value.length === 0){
@@ -99,7 +247,6 @@ const unfoucsclick2 = () => {
 //foucs3
 const foucsclick3 = () => {
     foucs3.value.className = 'focus'
-    console.log(foucs3.value.value.length)
 }
 const unfoucsclick3 = () => {
     if(foucs3.value.value.length === 0){
@@ -109,7 +256,6 @@ const unfoucsclick3 = () => {
 //foucs4
 const foucsclick4 = () => {
     foucs4.value.className = 'focus'
-    console.log(foucs4.value.value.length)
 }
 const unfoucsclick4 = () => {
     if(foucs4.value.value.length === 0){
@@ -119,7 +265,6 @@ const unfoucsclick4 = () => {
 //foucs5
 const foucsclick5 = () => {
     foucs5.value.className = 'focus'
-    console.log(foucs5.value.value.length)
 }
 const unfoucsclick5 = () => {
     if(foucs5.value.value.length === 0){
@@ -129,7 +274,6 @@ const unfoucsclick5 = () => {
 //foucs6
 const foucsclick6 = () => {
     foucs6.value.className = 'focus'
-    console.log(foucs6.value.value.length)
 }
 const unfoucsclick6 = () => {
     if(foucs6.value.value.length === 0){
@@ -137,11 +281,11 @@ const unfoucsclick6 = () => {
     }
 }
 </script>
-<style>
+<style scoped>
 * {
     box-sizing: border-box;
 }
-body {
+.authen {
     font-family: 'Montserrat',sans-serif;
     background-image: linear-gradient(120deg,#3498db,#8e44ad);;
     display: flex;
@@ -149,7 +293,6 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: -20px 0 50px;
 }
 
 h1 {

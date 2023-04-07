@@ -74,19 +74,14 @@ const routes = [
         ]
     },
     {
-        path: "/login",
-        name: "login",
-        component: () => import("@/authen/user-login.vue"),
-    },
-    {
-        path: "/register",
-        name: "register",
-        component: () => import("@/authen/user-register.vue"),
-    },
-    {
         path: "/authen",
-        name: "authen",
+        name: "user-authen",
         component: () => import("@/authen/user-authen.vue"),
+    },
+    {
+        path: "/findpassword",
+        name: "user-find-password",
+        component: () => import("@/authen/user-find-password.vue"),
     },
 ];
 

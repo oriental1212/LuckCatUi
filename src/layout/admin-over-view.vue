@@ -69,7 +69,10 @@
 import { Document, Location, Setting, ArrowDown} from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '../router';
+import { useStore } from 'vuex'
+import request from '../utils/axios';
 
+const store = useStore()
 const handleCommand = ( command ) => {
     if(command == "personal") {
         router.push("")
@@ -82,9 +85,23 @@ const handleCommand = ( command ) => {
                 center: true,
             }
         ).then(() => {
-            ElMessage({
-                type: 'success',
-                message: '登出成功',
+            request.get("/user/logout").then((res) => {
+                console.log(res)
+                if(res.code == 200){
+                    ElMessage({
+                        type: 'success',
+                        message: '登出成功',
+                    })
+                    localStorage.removeItem("LuckCat")
+                    localStorage.removeItem("personInfo")
+                    store.commit("changeloginflage")
+                    router.push({name: 'user-home'})
+                }if(res.code == 500){
+                    ElMessage({
+                        type: 'error',
+                        message: res.msg
+                    })
+                }
             })
         })
     }
