@@ -31,6 +31,14 @@ const routes = [
                     title: "图库",
                 },
             },
+            {
+                path: "/user/photo-view2",
+                name: "photo-view2",
+                component: () => import("@/views/user-view/photo-view2.vue"),
+                meta: {
+                    title: "图库2",
+                },
+            },
         ],
     },
     // 管理界面布局router

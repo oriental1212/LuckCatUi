@@ -14,6 +14,7 @@
                 >
                     <div class="logo">LuckCat</div>
                     <el-menu-item index="photo-view">图库</el-menu-item>
+                    <el-menu-item index="photo-view2">图库2</el-menu-item>
                     <el-menu-item index="">管理</el-menu-item>
                     <div style="flex-grow: 1;"></div>
                     <el-menu-item index="user-home"><el-icon><UploadFilled/></el-icon>上传</el-menu-item>
