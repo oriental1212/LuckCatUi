@@ -37,7 +37,7 @@
                         </el-col>
                         <el-col :span="18"></el-col>
                         <el-col :span="1.5">
-                            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+                            <el-avatar :src= "userRevise.avatar" />
                         </el-col>
                         <el-col :span="1.5">
                             <el-dropdown @command="handleCommand" placement="bottom-end">
@@ -54,10 +54,52 @@
                         </el-col>
                     </el-row>
                 </el-header>
+                <!-- 用户资料 -->
+                <el-drawer
+                    v-model="drawer"
+                >
+                    <template #header>
+                        <h1>个人资料</h1>
+                    </template>
+                    <template #default>
+                        <!-- 头像修改 -->
+                        <el-upload
+                            class="avatar-uploader"
+                            action="#"
+                            drag
+                            :show-file-list="false"
+                            :before-upload="beforeAvatarUpload"
+                            :on-progress="handleProgress"
+                        >
+                            <img :src="userRevise.avatar" class="avatar" />
+                        </el-upload>
+
+                        <el-descriptions 
+                            column="1"
+                            direction="vertical"
+                            size="small"
+                        >
+                            <el-descriptions-item label="用户名">{{ userRevise.username }}</el-descriptions-item>
+                            <el-descriptions-item label="昵称">{{ userRevise.nickname }}</el-descriptions-item>
+                            <el-descriptions-item label="邮箱">{{ userRevise.email }}</el-descriptions-item>
+                        </el-descriptions>
+                    </template>
+                    <template #footer>
+                        <div style="flex: auto">
+                            <el-button @click="cancelClick">关闭</el-button>
+                            <el-button type="primary" @click="confirmClick">修改</el-button>
+                        </div>
+                    </template>
+                </el-drawer>
 
                 <!-- 主内容 -->
                 <el-main>
-                    <router-view></router-view>
+                    <transition
+                    enter-active-class="animate__animated animate__fadeIn animate__faster"
+                    leave-active-class="animate__animated animate__fadeOut"
+                >                
+                        <router-view></router-view>
+                    </transition>
                 </el-main>
             </el-container>
 
@@ -71,11 +113,75 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '../router';
 import { useStore } from 'vuex'
 import request from '../utils/axios';
+import { reactive, ref } from 'vue';
 
+const drawer = ref(false)
 const store = useStore()
+
+const userRevise = reactive({
+})
+
+userRevise.avatar = JSON.parse(localStorage.getItem("personInfo")).avatarAddress
+userRevise.email = JSON.parse(localStorage.getItem("personInfo")).email
+userRevise.nickname = JSON.parse(localStorage.getItem("personInfo")).nickname
+userRevise.username = JSON.parse(localStorage.getItem("personInfo")).username
+
+const cancelClick = () => {
+    drawer.value = false
+}
+const confirmClick = () => {
+
+}
+
+//图片上传
+const beforeAvatarUpload = (rawFile) => {
+    if (rawFile.type != "image/jpeg" && rawFile.type !== "image/png" && rawFile.type !== "image/jpg") {
+        ElMessage.error("图片上传格式错误")
+        return false
+    } else if (rawFile.size / 1024 / 1024 > 2) {
+        ElMessage.error("图片大小不能超过2MB")
+        return false
+    }
+    return true
+}
+const handleProgress = (event,file) => {
+    console.log(event)
+    let fd = new FormData
+    fd.append('file',file.raw)
+    request.post("/user/avatarChange",fd).then((res) => {
+        if(res.code == 200){
+            ElMessage({
+                type: "success",
+                message: "图片上传成功"
+            })
+        }if(res.code == 500){
+            ElMessage({
+                type: "error",
+                message: res.msg
+            })
+        }
+    })
+    request.get("/user/getPersonalInfo").then((res) => {
+        if(res.code == 200){
+            ElMessage({
+                type: "success",
+                message: "用户信息更新成功"
+            })
+        }if(res.code == 500){
+            ElMessage({
+                type: "error",
+                message: res.msg
+            })
+        }
+        localStorage.setItem("personInfo", JSON.stringify(res.data))
+    })
+}
+
 const handleCommand = ( command ) => {
+    //个人资料
     if(command == "personal") {
-        router.push("")
+        drawer.value = true
+    //登出
     }else if(command == "logout"){
         ElMessageBox.confirm(
             '确定登出系统吗',
@@ -140,5 +246,16 @@ const comeback = () => {
     width: 100%;
     margin: 0px;
 }
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
 
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
 </style>

@@ -8,6 +8,7 @@ const store = createStore({
         }
     },
     mutations: {
+        //登录按钮和状态按钮改变
         changeloginflage(state) {
             state.logoinflage = !state.logoinflage
         }
