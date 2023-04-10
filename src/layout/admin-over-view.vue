@@ -21,9 +21,9 @@
                         <el-icon><setting /></el-icon>
                         <span>OSS管理</span>
                     </el-menu-item>
-                    <el-menu-item index="5">
+                    <el-menu-item index="systemsetting">
                         <el-icon><setting /></el-icon>
-                        <span>设置</span>
+                        <span>图库设置</span>
                     </el-menu-item>
                 </el-menu>
             </el-aside>
@@ -80,14 +80,20 @@
                             size="small"
                         >
                             <el-descriptions-item label="用户名">{{ userRevise.username }}</el-descriptions-item>
-                            <el-descriptions-item label="昵称">{{ userRevise.nickname }}</el-descriptions-item>
-                            <el-descriptions-item label="邮箱">{{ userRevise.email }}</el-descriptions-item>
+                            <el-descriptions-item v-if="personalInfoChange" label="昵称">{{ userRevise.nickname }}</el-descriptions-item>
+                            <el-descriptions-item v-else label="昵称">
+                                <el-input v-model="userRevise.nickname"/>
+                            </el-descriptions-item>
+                            <el-descriptions-item v-if="personalInfoChange" label="邮箱">{{ userRevise.email }}</el-descriptions-item>
+                            <el-descriptions-item v-else label="邮箱">
+                                <el-input v-model="userRevise.email"/>
+                            </el-descriptions-item>
                         </el-descriptions>
                     </template>
                     <template #footer>
                         <div style="flex: auto">
-                            <el-button @click="cancelClick">关闭</el-button>
-                            <el-button type="primary" @click="confirmClick">修改</el-button>
+                            <el-button @click="cancelClick">{{ buttonvalue.cancel }}</el-button>
+                            <el-button type="primary" @click="confirmClick">{{ buttonvalue.confirm }}</el-button>
                         </div>
                     </template>
                 </el-drawer>
@@ -117,8 +123,16 @@ import { reactive, ref } from 'vue';
 
 const drawer = ref(false)
 const store = useStore()
+const personalInfoChange = ref(true)
 
 const userRevise = reactive({
+})
+const userReviseConfirm = reactive({
+
+})
+const buttonvalue = reactive({
+    cancel: "关闭",
+    confirm: "修改"
 })
 
 userRevise.avatar = JSON.parse(localStorage.getItem("personInfo")).avatarAddress
@@ -127,10 +141,42 @@ userRevise.nickname = JSON.parse(localStorage.getItem("personInfo")).nickname
 userRevise.username = JSON.parse(localStorage.getItem("personInfo")).username
 
 const cancelClick = () => {
-    drawer.value = false
+    if(personalInfoChange.value == true){
+        drawer.value = false
+    }else{
+        personalInfoChange.value = true
+        buttonvalue.confirm = "修改"
+        buttonvalue.cancel = "关闭"
+        userRevise.email = JSON.parse(localStorage.getItem("personInfo")).email
+        userRevise.nickname = JSON.parse(localStorage.getItem("personInfo")).nickname
+    }
 }
 const confirmClick = () => {
-
+    if(personalInfoChange.value == true){
+        personalInfoChange.value = false
+        buttonvalue.confirm = "提交"
+        buttonvalue.cancel = "取消"
+    }else{
+        userReviseConfirm.nickname = userRevise.nickname
+        userReviseConfirm.email = userRevise.email
+        request.post("/user/personalRevise",userReviseConfirm).then(res => {
+            console.log(res)
+            request.get("/user/getPersonalInfo").then((res) => {
+                if(res.code == 200){
+                    ElMessage({
+                        type: "success",
+                        message: "用户数据更新成功"
+                    })
+                }if(res.code == 500){
+                    ElMessage({
+                        type: "error",
+                        message: res.msg
+                    })
+                }
+                localStorage.setItem("personInfo", JSON.stringify(res.data))
+            })
+        })
+    }
 }
 
 //图片上传
@@ -152,7 +198,7 @@ const handleProgress = (event,file) => {
         if(res.code == 200){
             ElMessage({
                 type: "success",
-                message: "图片上传成功"
+                message: "图片修改成功"
             })
         }if(res.code == 500){
             ElMessage({

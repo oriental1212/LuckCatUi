@@ -71,6 +71,14 @@ const routes = [
                     title: "SSO管理",
                 }
             },
+            {
+                path: "/background/systemsetting",
+                name: "system-setting",
+                component: () => import("@/views/admin-view/system-setting.vue"),
+                meta: {
+                    title: "图库设置",
+                }
+            },
         ]
     },
     {
