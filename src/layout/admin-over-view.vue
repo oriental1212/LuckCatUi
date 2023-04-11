@@ -3,22 +3,23 @@
         <el-container>
             <!-- 侧边菜单 -->
             <el-aside width="180px">
-                <el-menu
-                    default-active="backgroundview"
-                    :unique-opened="true"
-                    class="el-menu-vertical-demo"
-                    :router="true"
-                >
+                <el-menu default-active="backgroundview" :unique-opened="true" class="el-menu-vertical-demo" :router="true">
                     <el-menu-item index="backgroundview">
-                        <el-icon><location /></el-icon>
+                        <el-icon>
+                            <location />
+                        </el-icon>
                         <span>总览</span>
                     </el-menu-item>
                     <el-menu-item index="usercontroller">
-                        <el-icon><document /></el-icon>
+                        <el-icon>
+                            <document />
+                        </el-icon>
                         <span>用户管理</span>
                     </el-menu-item>
                     <el-menu-item index="objectstorage">
-                        <el-icon><setting /></el-icon>
+                        <el-icon>
+                            <setting />
+                        </el-icon>
                         <span>OSS管理</span>
                     </el-menu-item>
                     <el-menu-item index="systemsetting">
@@ -37,7 +38,7 @@
                         </el-col>
                         <el-col :span="18"></el-col>
                         <el-col :span="1.5">
-                            <el-avatar :src= "userRevise.avatar" />
+                            <el-avatar :src="userRevise.avatar" />
                         </el-col>
                         <el-col :span="1.5">
                             <el-dropdown @command="handleCommand" placement="bottom-end">
@@ -55,24 +56,18 @@
                     </el-row>
                 </el-header>
                 <!-- 用户资料 -->
-                <el-drawer
-                    v-model="drawer"
-                >
+                <el-drawer v-model="drawer">
                     <template #header>
                         <h1>个人资料</h1>
                     </template>
                     <template #default>
                         <!-- 头像修改 -->
-                        <el-upload
-                            class="avatar-uploader"
-                            action="#"
-                            drag
-                            :show-file-list="false"
-                            :before-upload="beforeAvatarUpload"
-                            :on-progress="handleProgress"
-                        >
-                            <img :src="userRevise.avatar" class="avatar" />
-                        </el-upload>
+                        <div class="avatarImg">
+                            <el-upload class="avatar-uploader" action="#" :show-file-list="false"
+                                :before-upload="beforeAvatarUpload" :on-progress="handleProgress">
+                                <img :src="userRevise.avatar" class="avatar" />
+                            </el-upload>
+                        </div>
 
                         <el-descriptions 
                             column="1"
@@ -100,10 +95,8 @@
 
                 <!-- 主内容 -->
                 <el-main>
-                    <transition
-                    enter-active-class="animate__animated animate__fadeIn animate__faster"
-                    leave-active-class="animate__animated animate__fadeOut"
-                >                
+                    <transition enter-active-class="animate__animated animate__fadeIn animate__faster"
+                        leave-active-class="animate__animated animate__fadeOut">
                         <router-view></router-view>
                     </transition>
                 </el-main>
@@ -114,7 +107,7 @@
 </template>
 
 <script setup>
-import { Document, Location, Setting, ArrowDown} from '@element-plus/icons-vue'
+import { Document, Location, Setting, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '../router';
 import { useStore } from 'vuex'
@@ -190,17 +183,17 @@ const beforeAvatarUpload = (rawFile) => {
     }
     return true
 }
-const handleProgress = (event,file) => {
+const handleProgress = (event, file) => {
     console.log(event)
     let fd = new FormData
-    fd.append('file',file.raw)
-    request.post("/user/avatarChange",fd).then((res) => {
-        if(res.code == 200){
+    fd.append('file', file.raw)
+    request.post("/user/avatarChange", fd).then((res) => {
+        if (res.code == 200) {
             ElMessage({
                 type: "success",
                 message: "图片修改成功"
             })
-        }if(res.code == 500){
+        } if (res.code == 500) {
             ElMessage({
                 type: "error",
                 message: res.msg
@@ -208,12 +201,12 @@ const handleProgress = (event,file) => {
         }
     })
     request.get("/user/getPersonalInfo").then((res) => {
-        if(res.code == 200){
+        if (res.code == 200) {
             ElMessage({
                 type: "success",
                 message: "用户信息更新成功"
             })
-        }if(res.code == 500){
+        } if (res.code == 500) {
             ElMessage({
                 type: "error",
                 message: res.msg
@@ -223,12 +216,12 @@ const handleProgress = (event,file) => {
     })
 }
 
-const handleCommand = ( command ) => {
+const handleCommand = (command) => {
     //个人资料
-    if(command == "personal") {
+    if (command == "personal") {
         drawer.value = true
-    //登出
-    }else if(command == "logout"){
+        //登出
+    } else if (command == "logout") {
         ElMessageBox.confirm(
             '确定登出系统吗',
             {
@@ -239,7 +232,7 @@ const handleCommand = ( command ) => {
         ).then(() => {
             request.get("/user/logout").then((res) => {
                 console.log(res)
-                if(res.code == 200){
+                if (res.code == 200) {
                     ElMessage({
                         type: 'success',
                         message: '登出成功',
@@ -247,8 +240,8 @@ const handleCommand = ( command ) => {
                     localStorage.removeItem("LuckCat")
                     localStorage.removeItem("personInfo")
                     store.commit("changeloginflage")
-                    router.push({name: 'user-home'})
-                }if(res.code == 500){
+                    router.push({ name: 'user-home' })
+                } if (res.code == 500) {
                     ElMessage({
                         type: 'error',
                         message: res.msg
@@ -260,7 +253,7 @@ const handleCommand = ( command ) => {
 }
 //返回主页
 const comeback = () => {
-    router.push({name: "user-home"})
+    router.push({ name: "user-home" })
 }
 </script>
 
@@ -281,27 +274,30 @@ const comeback = () => {
 .el-menu {
     background-color: #F0F2F5;
 }
+
 .el-container {
     height: 100%;
 }
-.el-menu-vertical-demo{
+
+.el-menu-vertical-demo {
     height: 100%;
 }
+
 .el-row {
     height: 100%;
     width: 100%;
     margin: 0px;
 }
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
+
+.avatarImg {
+    display: flex;
+    justify-content: center;
 }
 
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
+.avatar {
+    /* 修改个人信息头像 */
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
 }
 </style>
