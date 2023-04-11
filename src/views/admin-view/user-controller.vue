@@ -30,7 +30,7 @@
             </el-button>
 
         </div>
-        <el-table :data="filterTableData" style="width: 100%">
+        <el-table v-loading.fullscreen.lock="fullscreenLoading" :data="filterTableData" style="width: 100%">
             <el-table-column label="用户名" prop="username" />
             <el-table-column label="昵称" prop="nickname" />
             <el-table-column label="邮箱" prop="email" />
@@ -80,6 +80,7 @@ onMounted(() => {
     getTableData()
 })
 
+const fullscreenLoading = ref(false)
 const tableData = ref([])//表格数据
 const currentPage = ref(1)//当前页
 const pageSize = ref(5)//页面大小
@@ -133,6 +134,7 @@ const clear = () => {
 }
 // 请求表格数据
 const getTableData = () => {
+    fullscreenLoading.value = true
     request.get("/user/findAllUser", {
         params: {
             currentPage: currentPage.value,
@@ -149,6 +151,7 @@ const getTableData = () => {
                 duration: 2000
             })
         }
+        fullscreenLoading.value = false
     })
 }
 //禁用账户

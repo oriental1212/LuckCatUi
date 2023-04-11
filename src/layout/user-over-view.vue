@@ -32,7 +32,10 @@
                         <el-upload
                             class="upload-demo"
                             drag
-                            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+                            action="#"
+                            :show-file-list="false"
+                            :before-upload="beforePhotoUpload"
+                            :on-progress="photoUploadIng"
                             multiple
                         >
                             <el-icon class="el-icon--upload">
@@ -42,17 +45,14 @@
                                 <div style="font-size: 30px; color: #ffffff; margin-bottom: 10px;">
                                     拖放图片到这里上传
                                 </div>
-                                <span style="font-size: 1em; color: #ffffff"
-                                    >或者
+                                <span style="font-size: 1em; color: #ffffff">或者
                                     <em
                                         ><el-icon><ZoomIn /></el-icon
                                         >浏览您的计算器</em
-                                    ></span
-                                >
+                                    >
+                                </span>
                                 <br />
-                                <div
-                                    style="font-size: 0.79rem; margin-top: 5px"
-                                >
+                                <div style="font-size: 0.79rem; margin-top: 5px">
                                     JPG JPEG PNG GIF
                                 </div>
                             </div>
@@ -77,11 +77,60 @@ import { ClickOutside as vClickOutside } from 'element-plus'
 import { ref } from "vue";
 import router from "../router";
 import { useStore } from "vuex"
+import ElMessage from "element-plus";
+import request from "../utils/axios";
 
 const uploadstate = ref(false);
 const loginshow = ref();
 const store = useStore()
 loginshow.value = store.state.logoinflage
+const userPhotoSize = ref()
+
+//获取用户图片大小阈值
+request.get("").then(res => {
+    if(res.code == 200){
+        userPhotoSize.value = res.data
+    }else{
+        console.log("获取失败")
+    }
+})
+//上传前函数
+const beforePhotoUpload = (rawFile) => {
+    if(!userPhotoSize.value){
+        console.log("未获取成功用户的图片大小")
+        return false
+    }
+    if (rawFile.type != "image/jpeg" && rawFile.type !== "image/png" && rawFile.type !== "image/jpg" && rawFile.type !== "image/gif") {
+        ElMessage.error("图片上传格式错误")
+        return false
+    } else if (rawFile.size / 1024 / 1024 > userPhotoSize.value) {
+        ElMessage.error("图片大小超过设置阈值")
+        return false
+    }
+    return true
+}
+//上传函数
+const photoUploadIng = (event,file) => {
+    console.log(event)
+    let fd = new FormData
+    fd.append("file",file.raw)
+    fd.append("userName",JSON.parse(localStorage.getItem("personInfo")).username)
+    fd.append("userName","deafault")
+    request.post("/user/avatarChange",fd).then((res) => {
+        if(res.code == 200){
+            ElMessage({
+                type: "success",
+                message: "图片上传成功"
+            })
+        }if(res.code == 500){
+            ElMessage({
+                type: "error",
+                message: res.msg
+            })
+        }
+    })
+}
+
 // 上传框显示函数
 const uplaodclick = () => {
     uploadstate.value = !uploadstate.value;

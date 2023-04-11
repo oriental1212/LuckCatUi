@@ -9,11 +9,11 @@
                 </template>
                 <el-descriptions direction="vertical" size="big">
                     <!-- 用户设置浏览和修改 -->
-                    <el-descriptions-item v-if="userSettingChange" label="用户存储空间">{{ userSetting.space }}MB</el-descriptions-item>
+                    <el-descriptions-item v-if="userSettingChange" label="用户存储空间">{{ userSetting.space }} MB</el-descriptions-item>
                     <el-descriptions-item v-else label="用户存储空间">{{ userSetting.space }}MB</el-descriptions-item>
-                    <el-descriptions-item v-if="userSettingChange" label="用户图片大小">{{ userSetting.size }}个</el-descriptions-item>
+                    <el-descriptions-item v-if="userSettingChange" label="用户图片大小">{{ userSetting.size }} MB</el-descriptions-item>
                     <el-descriptions-item v-else label="用户图片大小">{{ userSetting.size }}个</el-descriptions-item>
-                    <el-descriptions-item v-if="userSettingChange" label="用户图片数量">{{ userSetting.quantity }}MB</el-descriptions-item>
+                    <el-descriptions-item v-if="userSettingChange" label="用户图片数量">{{ userSetting.quantity }} 个</el-descriptions-item>
                     <el-descriptions-item v-else label="用户图片数量">{{ userSetting.quantity }}MB</el-descriptions-item>
                 </el-descriptions>
             </el-card>
