@@ -43,23 +43,23 @@
                         <figcaption>
                             <p>
                                 <el-tooltip class="item" effect="dark" content="下载" placement="right">
-                                    <el-icon>
-                                        <download />
+                                    <el-icon @click="downLoad(url)">
+                                        <download/>
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="收藏" placement="right">
-                                    <el-icon>
-                                        <collection-tag />
+                                    <el-icon @click="star">
+                                        <Star/>
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="分享" placement="right">
-                                    <el-icon>
-                                        <share />
+                                    <el-icon @click="share(url)">
+                                        <Share/>
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="标签" placement="right">
-                                    <el-icon>
-                                        <price-tag />
+                                    <el-icon @click="tag">
+                                        <price-tag/>
                                     </el-icon>
                                 </el-tooltip>
 
@@ -74,6 +74,42 @@
 </template>
 
 <script setup>
+import { ElMessage } from "element-plus";
+import request from "../../utils/axios"
+import useClipboard from 'vue-clipboard3'
+
+const { toClipboard } = useClipboard()
+// 下载
+const downLoad = (url) => {
+    request.get("/photo/download/" + url.fliename).then((res) => {
+        if(res == 200){
+            ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
+        }else{
+            ElMessage.error("出了点小状况，重新试试吧")
+        }
+    })
+}
+//收藏
+const star = () => {
+    request.get().then(() => {
+
+    })
+}
+//分享
+const share = async (url) => {
+    try {
+        await toClipboard(url)
+        ElMessage.success("复制成功^-^,图片地址为：" + url)
+    } catch (e) {
+        console.error(e)
+    }
+}
+const tag = () => {
+    request.get().then(() => {
+        
+    })
+}
+
 const options = [
     {
         value: 'Option1',

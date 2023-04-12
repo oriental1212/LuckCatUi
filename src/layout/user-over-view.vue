@@ -115,8 +115,8 @@ const photoUploadIng = (event,file) => {
     let fd = new FormData
     fd.append("file",file.raw)
     fd.append("userName",JSON.parse(localStorage.getItem("personInfo")).username)
-    fd.append("userName","deafault")
-    request.post("/user/avatarChange",fd).then((res) => {
+    fd.append("photoTag","default")
+    request.post("/photo/upload",fd).then((res) => {
         if(res.code == 200){
             ElMessage({
                 type: "success",

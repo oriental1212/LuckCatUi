@@ -6,7 +6,7 @@ import router from "@/router/index.js";
 import App from "./App.vue";
 import store from "@/vuex/index.js";
 import "animate.css";
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import  locale   from "element-plus/es/locale/lang/zh-cn";
 
 const app = createApp(App)
