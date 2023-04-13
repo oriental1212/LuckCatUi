@@ -2,48 +2,48 @@
     <router-view>
         <!-- 数据总览 -->
         <el-row :gutter="10" justify="space-between" style="margin: 0;">
-                <el-col :span="8">
-                    <el-card class="box-card" shadow="always" >
-                        <template #header>
-                            <div class="card-header">
-                                <el-icon>
-                                    <Picture />
-                                </el-icon>
-                                <span style="color:#67C23A">
-                                    图片总数
-                                </span>
-                            </div>
-                        </template>
-                        <div class="card-body">{{ state.total_photo }}</div>
-                    </el-card>
-                </el-col>
-                <el-col :span="8" >
-                    <el-card class="box-card" shadow="always">
-                        <template #header>
-                            <div class="card-header">
-                                <el-icon>
-                                    <User />
-                                </el-icon>
-                                <span style="color:#E6A23C">用户总数</span>
-                            </div>
-                        </template>
-                        <div class="card-body">{{ state.total_user }}</div>
-                    </el-card>
-                </el-col>
-                <el-col :span="8">
-                    <el-card class="box-card" shadow="always">
-                        <template #header>
-                            <div class="card-header">
-                                <el-icon>
-                                    <PictureFilled />
-                                </el-icon>
-                                <span style="color:#fd0221">剩余容量</span>
-                            </div>
-                        </template>
-                        <div class="card-body">{{ state.total_space }}</div>
-                    </el-card>
-                </el-col>
-            
+            <el-col :span="8">
+                <el-card class="box-card" shadow="always">
+                    <template #header>
+                        <div class="card-header">
+                            <el-icon>
+                                <Picture />
+                            </el-icon>
+                            <span style="color:#67C23A">
+                                图片总数
+                            </span>
+                        </div>
+                    </template>
+                    <div class="card-body">{{ state.total_photo }}</div>
+                </el-card>
+            </el-col>
+            <el-col :span="8">
+                <el-card class="box-card" shadow="always">
+                    <template #header>
+                        <div class="card-header">
+                            <el-icon>
+                                <User />
+                            </el-icon>
+                            <span style="color:#E6A23C">用户总数</span>
+                        </div>
+                    </template>
+                    <div class="card-body">{{ state.total_user }}</div>
+                </el-card>
+            </el-col>
+            <el-col :span="8">
+                <el-card class="box-card" shadow="always">
+                    <template #header>
+                        <div class="card-header">
+                            <el-icon>
+                                <PictureFilled />
+                            </el-icon>
+                            <span style="color:#fd0221">已用容量</span>
+                        </div>
+                    </template>
+                    <div class="card-body">{{ state.total_space }}</div>
+                </el-card>
+            </el-col>
+
         </el-row>
         <!-- 可视化图表 -->
         <el-row :gutter="20" justify="space-between" style="padding-top: 20px;">
@@ -68,6 +68,8 @@ import {
     LegendComponent
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
+import request from "../../utils/axios";
+import { ElMessage } from "element-plus";
 //应用主题，dark为暗色主题
 provide(THEME_KEY, "");
 
@@ -78,10 +80,13 @@ use([
     TooltipComponent,
     LegendComponent
 ]);
+
+const barTitle=ref()//饼图标题
+const barData=ref()//饼图数据
 //echarts配置
 const option = ref({
     title: {
-        text: "Traffic Sources",
+        text: "图片类型占比",
         left: "center"
     },
     tooltip: {
@@ -91,21 +96,15 @@ const option = ref({
     legend: {
         orient: "vertical",
         left: "left",
-        data: ["Direct", "Email", "Ad Networks", "Video Ads", "Search Engines"]
+        data: barTitle
     },
     series: [
         {
-            name: "Traffic Sources",
+            name: "图片类型占比",
             type: "pie",
             radius: "55%",
             center: ["50%", "60%"],
-            data: [
-                { value: 335, name: "Direct" },
-                { value: 310, name: "Email" },
-                { value: 234, name: "Ad Networks" },
-                { value: 135, name: "Video Ads" },
-                { value: 1548, name: "Search Engines" }
-            ],
+            data: barData,
             emphasis: {
                 itemStyle: {
                     shadowBlur: 10,
@@ -123,6 +122,21 @@ const state = reactive({
     total_space: "total_space",
     personal_photo: "personal_photo",
     personal_space: "personal_space",
+})
+
+//请求页面数据
+request.get("/echarts").then((res) => {
+    if (res.code == 200) {
+        state.total_user=res.data.totalUser
+        state.total_photo=res.data.totalPhoto
+        state.total_space=res.data.totalSpace
+        barTitle.value=res.data.barTitle
+        barData.value=res.data.barData
+    }else if(res.code==500){
+        ElMessage.error(res.msg)
+    }else{
+        ElMessage.error(res.msg)
+    }
 })
 </script>
 
@@ -154,5 +168,4 @@ const state = reactive({
 .chart {
     height: 400px;
 }
-
 </style>

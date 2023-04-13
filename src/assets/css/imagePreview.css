@@ -3,10 +3,8 @@ figure {
     /* 相对定位 */
     position: relative;
     margin: 10px 1%;
-    /* width: 480px;
-    height: 360px; */
-    height: 220px;
-    width: 360px;
+    height: 180px;
+    width: 320px;
     /* 溢出隐藏 */
     overflow: hidden;
     background-color: #34495e;
@@ -25,7 +23,7 @@ figcaption::after {
     position: absolute;
     border-style: solid;
     /* border-color: #101010; */
-    border-color: rgba(0, 0, 0, 0.8);
+    border-color: rgba(0, 0, 0, 0.7);
     /* 设置过渡 */
     transition: transform 0.35s;
     /* 设置元素不对鼠标事件做出反应,图标的悬停样式才会有效 */
@@ -54,7 +52,7 @@ figcaption::after {
 figure img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     position: absolute;
     left: 0;
     top: 0;
@@ -73,7 +71,7 @@ figure #preview {
 /* 功能图标区域 */
 figure p {
     position: absolute;
-    top: 25px;
+    top: 15px;
     right: 0;
     display: flex;
     flex-direction: column;
@@ -84,7 +82,7 @@ figure p {
 
 /* 图标 */
 figure p i {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     font-size: 22px !important;
     cursor: pointer;
     /* 默认隐藏 */
@@ -94,7 +92,7 @@ figure p i {
     transition: opacity 0.35s, transform 0.35s;
 }
 
-/* 接下来是鼠标悬停时的样式变化 */
+/* 鼠标悬停时的样式变化 */
 figure:hover figcaption::before,
 figure:hover figcaption::after {
     transform: translate(0, 0);
@@ -102,8 +100,8 @@ figure:hover figcaption::after {
 
 figure:hover img {
     opacity: 0.8;
-    width: 95%;
-    height: 95%;
+    width: 110%;
+    height: 110%;
 }
 
 figure:hover h2,

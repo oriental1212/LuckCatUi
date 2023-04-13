@@ -38,7 +38,8 @@
                         <el-image :src="url" :preview-src-list="urls" 
                         :initial-index="index"
                         hide-on-click-modal="true"
-                        preview-teleported="true" 
+                        preview-teleported="true"
+                        fit="contain" 
                         />
                         <figcaption>
                             <p>
@@ -81,6 +82,7 @@ import useClipboard from 'vue-clipboard3'
 const { toClipboard } = useClipboard()
 // 下载
 const downLoad = (url) => {
+    console.log(url);
     request.get("/photo/download/" + url.fliename).then((res) => {
         if(res == 200){
             ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
@@ -99,7 +101,10 @@ const star = () => {
 const share = async (url) => {
     try {
         await toClipboard(url)
-        ElMessage.success("复制成功^-^,图片地址为：" + url)
+        ElMessage.success({
+            message:"复制成功^-^,图片地址为：" + url,
+            duration:2000
+        })
     } catch (e) {
         console.error(e)
     }
@@ -118,10 +123,10 @@ const options = [
 ]
 
 const urls = [
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
+    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554117163?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T100127Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b1996854cd92bf7b0f3e2be49fe98c311c84c10ea422379b12b1c2b68a78ec44',
+    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554173142?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101053Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=418dac75f7528869d35823e062a6d32f0c3ff801509ee3fad15ea602e64a027a',
+    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-a26f66658e014e06aa70e2753742bef3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101108Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=992b383c72c3b9c38ce93dccfec2a9dded95814ad73f47ba1913f039922be10a',
+    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-7f9a58e2582bb4a1e70f87f4c22b554_edited?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T133430Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3f1a0c320f826bc11b0109f6e8c664c655ac6875b62e49c4c90ed231c47a5783',
     'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
     'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
     'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',

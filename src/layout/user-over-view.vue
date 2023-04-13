@@ -2,42 +2,31 @@
     <div class="common-layout">
         <el-container style="height: 100%">
             <el-header>
-                <el-menu
-                    :default-active="user-home"
-                    class="el-menu-demo"
-                    mode="horizontal"
-                    background-color="#2a2a32"
-                    :router="true"
-                    @select="select"
-                    text-color="#fff"
-                    :ellipsis="false"
-                >
+                <el-menu :default-active="user - home" class="el-menu-demo" mode="horizontal" background-color="#2a2a32"
+                    :router="true" @select="select" text-color="#fff" :ellipsis="false">
                     <div class="logo">LuckCat</div>
                     <el-menu-item index="photo-view">图库</el-menu-item>
                     <el-menu-item index="photo-view2">图库2</el-menu-item>
                     <el-menu-item index="">管理</el-menu-item>
                     <div style="flex-grow: 1;"></div>
-                    <el-menu-item index="user-home"><el-icon><UploadFilled/></el-icon>上传</el-menu-item>
-                    <el-menu-item index="authen" v-if="loginshow"><el-icon><Right/></el-icon>登录</el-menu-item>
-                    <el-menu-item index="background" v-if="!loginshow"><el-icon><User/></el-icon>个人中心</el-menu-item>
+                    <el-menu-item index="user-home"><el-icon>
+                            <UploadFilled />
+                        </el-icon>上传</el-menu-item>
+                    <el-menu-item index="authen" v-if="loginshow"><el-icon>
+                            <Right />
+                        </el-icon>登录</el-menu-item>
+                    <el-menu-item index="background" v-if="!loginshow"><el-icon>
+                            <User />
+                        </el-icon>个人中心</el-menu-item>
                 </el-menu>
             </el-header>
             <el-main style="padding: 0px">
                 <!-- 上传模块 -->
-                <transition
-                    enter-active-class="animate__animated animate__fadeInDown animate__faster"
-                    leave-active-class="animate__animated animate__fadeOutUp"
-                >
-                    <div v-show="uploadstate" class="upload" v-click-outside= "onClickOutside">
-                        <el-upload
-                            class="upload-demo"
-                            drag
-                            action="#"
-                            :show-file-list="false"
-                            :before-upload="beforePhotoUpload"
-                            :on-progress="photoUploadIng"
-                            multiple
-                        >
+                <transition enter-active-class="animate__animated animate__fadeInDown animate__faster"
+                    leave-active-class="animate__animated animate__fadeOutUp">
+                    <div v-show="uploadstate" class="upload" v-click-outside="onClickOutside">
+                        <el-upload class="upload-demo" drag action="#" :show-file-list="true"
+                            :before-upload="beforePhotoUpload" :on-progress="photoUploadIng">
                             <el-icon class="el-icon--upload">
                                 <upload-filled />
                             </el-icon>
@@ -46,10 +35,9 @@
                                     拖放图片到这里上传
                                 </div>
                                 <span style="font-size: 1em; color: #ffffff">或者
-                                    <em
-                                        ><el-icon><ZoomIn /></el-icon
-                                        >浏览您的计算器</em
-                                    >
+                                    <em><el-icon>
+                                            <ZoomIn />
+                                        </el-icon>浏览您的计算器</em>
                                 </span>
                                 <br />
                                 <div style="font-size: 0.79rem; margin-top: 5px">
@@ -60,10 +48,8 @@
                     </div>
                 </transition>
 
-                <transition
-                    enter-active-class="animate__animated animate__fadeIn animate__faster"
-                    leave-active-class="animate__animated animate__fadeOut"
-                >                
+                <transition enter-active-class="animate__animated animate__fadeIn animate__faster"
+                    leave-active-class="animate__animated animate__fadeOut">
                     <router-view></router-view>
                 </transition>
             </el-main>
@@ -77,7 +63,7 @@ import { ClickOutside as vClickOutside } from 'element-plus'
 import { ref } from "vue";
 import router from "../router";
 import { useStore } from "vuex"
-import ElMessage from "element-plus";
+import { ElMessage } from 'element-plus'
 import request from "../utils/axios";
 
 const uploadstate = ref(false);
@@ -87,42 +73,59 @@ loginshow.value = store.state.logoinflage
 const userPhotoSize = ref()
 
 //获取用户图片大小阈值
-request.get("").then(res => {
-    if(res.code == 200){
-        userPhotoSize.value = res.data
-    }else{
+request.post("/setting/getSetting").then(res => {
+    if (res.code == 200) {
+        userPhotoSize.value = res.data.storageSize
+        console.log("获取成功，单个大小为：", userPhotoSize.value);
+    } else {
         console.log("获取失败")
     }
 })
 //上传前函数
 const beforePhotoUpload = (rawFile) => {
-    if(!userPhotoSize.value){
-        console.log("未获取成功用户的图片大小")
+    if (!userPhotoSize.value) {
+        ElMessage.error({
+            message: "未获取成功用户的图片大小",
+            duration: 4000
+        })
         return false
     }
-    if (rawFile.type != "image/jpeg" && rawFile.type !== "image/png" && rawFile.type !== "image/jpg" && rawFile.type !== "image/gif") {
-        ElMessage.error("图片上传格式错误")
+    if (rawFile.type != "image/jpeg" && rawFile.type != "image/png" && rawFile.type != "image/jpg" && rawFile.type != "image/gif") {
+        ElMessage.error({
+            message: "图片上传格式错误",
+            duration: 4000
+        })
+
         return false
     } else if (rawFile.size / 1024 / 1024 > userPhotoSize.value) {
-        ElMessage.error("图片大小超过设置阈值")
+        ElMessage.error({
+            message: "图片大小超过设置阈值",
+            duration: 4000
+        })
         return false
     }
+    console.log("校验成功");
     return true
 }
 //上传函数
-const photoUploadIng = (event,file) => {
+const photoUploadIng = (event, file) => {
     console.log(event)
     let fd = new FormData
-    fd.append("file",file.raw)
-    fd.append("userName",JSON.parse(localStorage.getItem("personInfo")).username)
-    fd.append("photoTag","default")
-    request.post("/photo/upload",fd).then((res) => {
-        if(res.code == 200){
+    fd.append("file", file.raw)
+    fd.append("userName", JSON.parse(localStorage.getItem("personInfo")).username)
+    fd.append("photoTag", "default")
+    request.post("/photo/upload", fd).then((res) => {
+        if (res.code == 200) {
             ElMessage({
                 type: "success",
                 message: "图片上传成功"
             })
-        }if(res.code == 500){
+        } else if (res.code == 500) {
+            ElMessage({
+                type: "error",
+                message: res.msg
+            })
+        } else {
             ElMessage({
                 type: "error",
                 message: res.msg
@@ -149,8 +152,8 @@ const select = (key) => {
     }
 };
 //点击上传区域外隐藏上传界面
-const onClickOutside=()=>{
-    uploadstate.value=false
+const onClickOutside = () => {
+    uploadstate.value = false
 }
 </script>
 
@@ -178,15 +181,18 @@ body,
     background-color: #2a2a32;
     border-style: none;
 }
+
 .el-header {
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
         0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
     padding: 0px 50px;
     background: #2a2a32;
 }
+
 .el-menu-demo {
     border-bottom: 0px;
 }
+
 .logo {
     padding-right: 30px;
     color: white;
