@@ -64,7 +64,7 @@ const userSetting = reactive({
 const ruleForm = reactive({
     storageSpace: 0,
     storageSize: 0,
-    storageQuantity: 0
+    storageQuantity: 0,
 })
 onBeforeMount(() => {
     getData()

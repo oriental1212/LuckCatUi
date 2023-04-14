@@ -49,8 +49,11 @@
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="收藏" placement="right">
-                                    <el-icon @click="star">
+                                    <el-icon v-if="url.photoTag != 'love'" @click="star(url)">
                                         <Star/>
+                                    </el-icon>
+                                    <el-icon v-else @click="star(url)">
+                                        <StarFilled/>
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="分享" placement="right">
@@ -78,12 +81,27 @@
 import { ElMessage } from "element-plus";
 import request from "../../utils/axios"
 import useClipboard from 'vue-clipboard3'
+import { onBeforeMount, reactive } from "vue";
 
 const { toClipboard } = useClipboard()
+const photoInfo = reactive([{
+    photoName: "",
+    photoTag: "",
+    photoUrl: "",
+    photoCreatTime: ""
+}])
+const photoPage = reactive({
+    size: "",
+    page: ""
+})
+onBeforeMount(() => {
+    getUserPhoto()
+    console.log(photoInfo)
+})
 // 下载
 const downLoad = (url) => {
     console.log(url);
-    request.get("/photo/download/" + url.fliename).then((res) => {
+    request.get("/photo/download/" + url.photoName).then((res) => {
         if(res == 200){
             ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
         }else{
@@ -92,26 +110,57 @@ const downLoad = (url) => {
     })
 }
 //收藏
-const star = () => {
-    request.get().then(() => {
-
-    })
+const star = (url) => {
+    if(photoInfo.photoTag == "love"){
+        ElMessage.error("该图片已经收藏了哟")
+    }else{
+        request.get("/photo/photoLove",photoInfo).then((res) => {
+            if(res.code == 200){
+                ElMessage.success(res.data)
+                url.photoTag = "love"
+            }else{
+                ElMessage.error(res.msg)
+            }
+        })
+    }
 }
 //分享
 const share = async (url) => {
     try {
-        await toClipboard(url)
+        await toClipboard(url.photoUrl)
         ElMessage.success({
-            message:"复制成功^-^,图片地址为：" + url,
+            message:"复制成功^-^,图片地址为：" + url.photoUrl,
             duration:2000
         })
     } catch (e) {
         console.error(e)
     }
 }
-const tag = () => {
-    request.get().then(() => {
-        
+//更改标签
+const tag = (url) => {
+    request.get("/photo/modifyLabel",url).then((res) => {
+        if(res.code == 200){
+            ElMessage.success(res.data)
+            getUserPhoto()
+        }else{
+            ElMessage.error(res.msg)
+        }
+    })
+}
+
+//请求获取用户所有图片函数
+const getUserPhoto = () => {
+    request.get("/photo/queryByUsername",photoPage).then((res) => {
+        if(res.code == 200){
+            for(let i = 0;i < res.data.length ; i++ ){
+                photoInfo[i].photoName = res.data[i].photoName
+                photoInfo[i].photoTag = res.data[i].photoTag
+                photoInfo[i].photoUrl = res.data[i].photoUrl
+                photoInfo[i].photoCreatTime = res.data[i].photoCreatTime
+            }
+        }else{
+            ElMessage.error(res.msg)
+        }
     })
 }
 
