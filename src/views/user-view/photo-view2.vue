@@ -5,27 +5,31 @@
                 <!-- 选择器 -->
                 <div class="select">
                     <el-row :gutter="15" justify="space-evenly">
-                    <el-col :span="4">
-                        <el-select v-model="value" placeholder="标签" size="large" clearable>
-                            <el-option v-for="item in tagOptions" :key="item.value" :label="item.value" :value="item.value" />
-                        </el-select>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-select v-model="value" placeholder="时间" size="large" clearable>
-                            <el-option v-for="item in timeOptions" :key="item.value" :label="item.value" :value="item.value" />
-                        </el-select>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-select v-model="value" placeholder="图片类型" size="large" clearable>
-                            <el-option v-for="item in typeOptions" :key="item.value" :label="item.value" :value="item.value" />
-                        </el-select>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-select v-model="value" placeholder="明明爱你呀" size="large" clearable>
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-                        </el-select>
-                    </el-col>
-                </el-row>
+                        <el-col :span="4">
+                            <el-select v-model="value" placeholder="标签" size="large">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-select v-model="value" placeholder="时间" size="large">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-select v-model="value" placeholder="图片类型" size="large">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-select v-model="value" placeholder="明明爱你呀" size="large">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </el-col>
+                    </el-row>
                 </div>
                 <!-- 图片展示 -->
                 <div class="box">
@@ -35,35 +39,37 @@
                             hide-on-click-modal 点击遮罩层关闭预览
                             preview-teleported 是否插入至 body 元素上。 嵌套的父元素属性会发生修改时应该将此属性设置为 true
                          -->
-                        <el-image :src="url" :preview-src-list="urls" 
-                        :initial-index="index"
-                        hide-on-click-modal="true"
-                        preview-teleported="true"
-                        fit="contain" 
-                        />
+                        <el-image :src="url" :preview-src-list="urls" :initial-index="index" hide-on-click-modal="true"
+                            preview-teleported="true" fit="contain" />
                         <figcaption>
+                            <span>
+                                <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
+                                     <el-icon><Delete /></el-icon>
+                                </el-tooltip>
+                               
+                            </span>
                             <p>
                                 <el-tooltip class="item" effect="dark" content="下载" placement="right">
                                     <el-icon @click="downLoad(url)">
-                                        <download/>
+                                        <download />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="收藏" placement="right">
                                     <el-icon v-if="url.photoTag != 'love'" @click="star(url)">
-                                        <Star/>
+                                        <Star />
                                     </el-icon>
                                     <el-icon v-else @click="star(url)">
-                                        <StarFilled/>
+                                        <StarFilled />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="分享" placement="right">
                                     <el-icon @click="share(url)">
-                                        <Share/>
+                                        <Share />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="标签" placement="right">
                                     <el-icon @click="tag">
-                                        <price-tag/>
+                                        <price-tag />
                                     </el-icon>
                                 </el-tooltip>
                             </p>
@@ -101,23 +107,23 @@ onBeforeMount(() => {
 const downLoad = (url) => {
     console.log(url);
     request.get("/photo/download/" + url.photoName).then((res) => {
-        if(res == 200){
+        if (res == 200) {
             ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
-        }else{
+        } else {
             ElMessage.error("出了点小状况，重新试试吧")
         }
     })
 }
 //收藏
 const star = (url) => {
-    if(photoInfo.photoTag == "love"){
+    if (photoInfo.photoTag == "love") {
         ElMessage.error("该图片已经收藏了哟")
-    }else{
-        request.get("/photo/photoLove",photoInfo).then((res) => {
-            if(res.code == 200){
+    } else {
+        request.get("/photo/photoLove", photoInfo).then((res) => {
+            if (res.code == 200) {
                 ElMessage.success(res.data)
                 url.photoTag = "love"
-            }else{
+            } else {
                 ElMessage.error(res.msg)
             }
         })
@@ -128,8 +134,8 @@ const share = async (url) => {
     try {
         await toClipboard(url.photoUrl)
         ElMessage.success({
-            message:"复制成功^-^,图片地址为：" + url.photoUrl,
-            duration:2000
+            message: "复制成功^-^,图片地址为：" + url.photoUrl,
+            duration: 2000
         })
     } catch (e) {
         console.error(e)
@@ -137,11 +143,11 @@ const share = async (url) => {
 }
 //更改标签
 const tag = (url) => {
-    request.get("/photo/modifyLabel",url).then((res) => {
-        if(res.code == 200){
+    request.get("/photo/modifyLabel", url).then((res) => {
+        if (res.code == 200) {
             ElMessage.success(res.data)
             getUserPhoto()
-        }else{
+        } else {
             ElMessage.error(res.msg)
         }
     })
@@ -149,15 +155,15 @@ const tag = (url) => {
 
 //请求获取用户所有图片函数
 const getUserPhoto = () => {
-    request.get("/photo/queryByUsername",photoPage).then((res) => {
-        if(res.code == 200){
-            for(let i = 0;i < res.data.length ; i++ ){
+    request.get("/photo/queryByUsername", photoPage).then((res) => {
+        if (res.code == 200) {
+            for (let i = 0; i < res.data.length; i++) {
                 photoInfo[i].photoName = res.data[i].photoName
                 photoInfo[i].photoTag = res.data[i].photoTag
                 photoInfo[i].photoUrl = res.data[i].photoUrl
                 photoInfo[i].photoCreatTime = res.data[i].photoCreatTime
             }
-        }else{
+        } else {
             ElMessage.error(res.msg)
         }
     })
