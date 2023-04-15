@@ -6,22 +6,22 @@
                 <div class="select">
                     <el-row :gutter="15" justify="space-evenly">
                     <el-col :span="4">
-                        <el-select v-model="value" placeholder="标签" size="large">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                        <el-select v-model="value" placeholder="标签" size="large" clearable>
+                            <el-option v-for="item in tagOptions" :key="item.value" :label="item.value" :value="item.value" />
                         </el-select>
                     </el-col>
                     <el-col :span="4">
-                        <el-select v-model="value" placeholder="时间" size="large">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                        <el-select v-model="value" placeholder="时间" size="large" clearable>
+                            <el-option v-for="item in timeOptions" :key="item.value" :label="item.value" :value="item.value" />
                         </el-select>
                     </el-col>
                     <el-col :span="4">
-                        <el-select v-model="value" placeholder="图片类型" size="large">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                        <el-select v-model="value" placeholder="图片类型" size="large" clearable>
+                            <el-option v-for="item in typeOptions" :key="item.value" :label="item.value" :value="item.value" />
                         </el-select>
                     </el-col>
                     <el-col :span="4">
-                        <el-select v-model="value" placeholder="明明爱你呀" size="large">
+                        <el-select v-model="value" placeholder="明明爱你呀" size="large" clearable>
                             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
                         </el-select>
                     </el-col>
@@ -66,7 +66,6 @@
                                         <price-tag/>
                                     </el-icon>
                                 </el-tooltip>
-
                             </p>
                         </figcaption>
                     </figure>
@@ -164,12 +163,13 @@ const getUserPhoto = () => {
     })
 }
 
-const options = [
-    {
-        value: 'Option1',
-        label: 'Option1',
-    },
-]
+const tagOptions = reactive([
+    {value: "love"},
+    {value: "a"},
+    {value: "b"},
+])
+const timeOptions = reactive([])
+const typeOptions = reactive([])
 
 const urls = [
     'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554117163?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T100127Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b1996854cd92bf7b0f3e2be49fe98c311c84c10ea422379b12b1c2b68a78ec44',

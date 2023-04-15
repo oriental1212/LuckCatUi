@@ -16,11 +16,13 @@
                     <el-descriptions-item label="用户单个图片大小">
                         {{ userSetting.storageQuantity }}MB
                     </el-descriptions-item>
-                    <el-descriptions-item label="用户图片数量">
-                        {{ userSetting.storageSize }}个
+                    <el-descriptions-item label="用户剩余容量">
+                        {{ userSetting.storageUsed }}个
                     </el-descriptions-item>
                 </el-descriptions>
             </el-card>
+            <!-- 单个用户的相关设置 -->
+
 
             <el-dialog v-model="editDialogVisible" title="修改设置" width="50%" :close-on-click-modal="false" align-center>
                 <el-form ref="ruleFormRef" :model="ruleForm" :label-position="labelPosition" :rules="rules">
@@ -29,9 +31,6 @@
                     </el-form-item>
                     <el-form-item label="存储图片总数" prop="storageSize">
                         <el-input-number v-model="ruleForm.storageSize" :min="1"></el-input-number>
-                    </el-form-item>
-                    <el-form-item label="单个图片大小(MB)" prop="storageQuantity">
-                        <el-slider v-model="ruleForm.storageQuantity" show-input :min="1" />
                     </el-form-item>
                 </el-form>
                 <template #footer>
@@ -58,13 +57,12 @@ const editDialogVisible = ref(false)//修改对话框的状态
 const userSetting = reactive({
     storageSpace: 0,
     storageSize: 0,
-    storageQuantity: 0
+    storageUsed: 0
 })
 //提交表单
 const ruleForm = reactive({
     storageSpace: 0,
     storageSize: 0,
-    storageQuantity: 0,
 })
 onBeforeMount(() => {
     getData()
@@ -77,7 +75,6 @@ const cancel = () => {
 const eidtSetting = () => {
     ruleForm.storageSpace = userSetting.storageSpace
     ruleForm.storageSize = userSetting.storageSize
-    ruleForm.storageQuantity = userSetting.storageQuantity
     editDialogVisible.value = true
 
 }
@@ -88,11 +85,7 @@ const rules = reactive({
     ],
     storageSize: [
         { required: true, message: '请填写存储图片总数', trigger: 'change' },
-    ],
-    storageQuantity: [
-        { required: true, message: '请填写单个图片大小', trigger: 'change' },
-    ],
-
+    ]
 })
 //提交修改
 const submitForm = async (formEl) => {
@@ -127,7 +120,7 @@ const getData = () => {
         if (res.code == 200) {
             userSetting.storageSpace = parseInt(res.data.storageSpace) / 1024
             userSetting.storageSize = parseInt(res.data.storageSize)
-            userSetting.storageQuantity = parseInt(res.data.storageQuantity)
+            userSetting.storageUsed = parseInt(res.data.storageUsed)
         } else if (res.code == 500) {
             ElMessage.error({
                 message: res.msg

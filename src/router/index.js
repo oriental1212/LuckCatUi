@@ -24,19 +24,11 @@ const routes = [
                 },
             },
             {
-                path: "/user/photo-view",
-                name: "photo-view",
-                component: () => import("@/views/user-view/photo-view.vue"),
-                meta: {
-                    title: "图库",
-                },
-            },
-            {
                 path: "/user/photo-view2",
                 name: "photo-view2",
                 component: () => import("@/views/user-view/photo-view2.vue"),
                 meta: {
-                    title: "图库2",
+                    title: "图库",
                 },
             },
         ],
