@@ -14,10 +14,10 @@
                         {{ userSetting.storageSpace }}GB
                     </el-descriptions-item>
                     <el-descriptions-item label="用户单个图片大小">
-                        {{ userSetting.storageQuantity }}MB
+                        {{ userSetting.storageSize }}MB
                     </el-descriptions-item>
-                    <el-descriptions-item label="用户剩余容量">
-                        {{ userSetting.storageUsed }}个
+                    <el-descriptions-item label="用户最大使用容量">
+                        {{ userSetting.storageMaxUsed }}个
                     </el-descriptions-item>
                 </el-descriptions>
             </el-card>
@@ -57,7 +57,7 @@ const editDialogVisible = ref(false)//修改对话框的状态
 const userSetting = reactive({
     storageSpace: 0,
     storageSize: 0,
-    storageUsed: 0
+    storageMaxUsed: 0
 })
 //提交表单
 const ruleForm = reactive({
@@ -76,7 +76,6 @@ const eidtSetting = () => {
     ruleForm.storageSpace = userSetting.storageSpace
     ruleForm.storageSize = userSetting.storageSize
     editDialogVisible.value = true
-
 }
 //修改设置的表单验证规则
 const rules = reactive({
@@ -120,7 +119,7 @@ const getData = () => {
         if (res.code == 200) {
             userSetting.storageSpace = parseInt(res.data.storageSpace) / 1024
             userSetting.storageSize = parseInt(res.data.storageSize)
-            userSetting.storageUsed = parseInt(res.data.storageUsed)
+            userSetting.storageMaxUsed = parseInt(res.data.storageMaxUsed)
         } else if (res.code == 500) {
             ElMessage.error({
                 message: res.msg
