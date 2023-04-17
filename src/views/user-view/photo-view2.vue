@@ -7,25 +7,25 @@
                     <el-row :gutter="15" justify="space-evenly">
                         <el-col :span="4">
                             <el-select v-model="value" placeholder="标签" size="large">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-col>
                         <el-col :span="4">
                             <el-select v-model="value" placeholder="时间" size="large">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                <el-option v-for="item in timeOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-col>
                         <el-col :span="4">
                             <el-select v-model="value" placeholder="图片类型" size="large">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
-                            </el-select>
+                            </el-select> 
                         </el-col>
                         <el-col :span="4">
                             <el-select v-model="value" placeholder="明明爱你呀" size="large">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-col>
@@ -42,19 +42,13 @@
                         <el-image :src="url" :preview-src-list="urls" :initial-index="index" hide-on-click-modal="true"
                             preview-teleported="true" fit="contain" />
                         <figcaption>
-                            <span>
-                                <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
-                                     <el-icon><Delete /></el-icon>
-                                </el-tooltip>
-                               
-                            </span>
                             <p>
-                                <el-tooltip class="item" effect="dark" content="下载" placement="right">
+                                <el-tooltip class="item" effect="dark" content="下载" placement="bottom">
                                     <el-icon @click="downLoad(url)">
                                         <download />
                                     </el-icon>
                                 </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="收藏" placement="right">
+                                <el-tooltip class="item" effect="dark" content="收藏" placement="bottom">
                                     <el-icon v-if="url.photoTag != 'love'" @click="star(url)">
                                         <Star />
                                     </el-icon>
@@ -62,16 +56,19 @@
                                         <StarFilled />
                                     </el-icon>
                                 </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="分享" placement="right">
+                                <el-tooltip class="item" effect="dark" content="分享" placement="bottom">
                                     <el-icon @click="share(url)">
                                         <Share />
                                     </el-icon>
                                 </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="标签" placement="right">
+                                <el-tooltip class="item" effect="dark" content="标签" placement="bottom">
                                     <el-icon @click="tag">
                                         <price-tag />
                                     </el-icon>
                                 </el-tooltip>
+                                <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
+                                     <el-icon><Delete /></el-icon>
+                                </el-tooltip>      
                             </p>
                         </figcaption>
                     </figure>
