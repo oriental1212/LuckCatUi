@@ -4,27 +4,19 @@
             <div class="photo-view-son">
                 <!-- 选择器 -->
                 <div class="select">
-                    <el-row :gutter="15" justify="space-evenly">
-                        <el-col :span="4">
-                            <el-select v-model="value" placeholder="标签" size="large">
+                    <el-row :gutter="15" justify="space-around">
+                        <el-col :span="5">
+                            <el-select v-model="select.photoInfo.photoTag" placeholder="标签" size="large" clearable>
                                 <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-col>
-                        <el-col :span="4">
-                            <el-select v-model="value" placeholder="时间" size="large">
-                                <el-option v-for="item in timeOptions" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
+                        <el-col :span="5">
+                            <el-date-picker v-model="select.photoInfo.photoCreatTime" type="time" size="large" value-format="YYYY-MM-DD"
+                                placeholder="请选择日期" :shortcuts="shortcuts" @blur="reset()" clearable/>
                         </el-col>
-                        <el-col :span="4">
-                            <el-select v-model="value" placeholder="图片类型" size="large">
-                                <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select> 
-                        </el-col>
-                        <el-col :span="4">
-                            <el-select v-model="value" placeholder="明明爱你呀" size="large">
+                        <el-col :span="5">
+                            <el-select v-model="select.photoInfo.photoType" placeholder="图片类型" size="large" clearable>
                                 <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
@@ -33,31 +25,26 @@
                 </div>
                 <!-- 图片展示 -->
                 <div class="box">
-                    <figure v-for="(url, index) in urls" :key="url">
-                        <!-- 
-                            initial-index 初始化预览图片组第一张为选中图片
-                            hide-on-click-modal 点击遮罩层关闭预览
-                            preview-teleported 是否插入至 body 元素上。 嵌套的父元素属性会发生修改时应该将此属性设置为 true
-                         -->
-                        <el-image :src="url" :preview-src-list="urls" :initial-index="index" hide-on-click-modal="true"
-                            preview-teleported="true" fit="contain" />
+                    <figure v-for="(photoInfo, index) in filterPhotoInfos" :key="index">
+                        <el-image :src="photoInfo.photoUrl" :preview-src-list="urls" :initial-index="index"
+                            hide-on-click-modal="true" preview-teleported="true" fit="contain" lazy />
                         <figcaption>
                             <p>
                                 <el-tooltip class="item" effect="dark" content="下载" placement="bottom">
-                                    <el-icon @click="downLoad(url)">
+                                    <el-icon @click="downLoad(photoInfo.photoUrl)">
                                         <download />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="收藏" placement="bottom">
-                                    <el-icon v-if="url.photoTag != 'love'" @click="star(url)">
+                                    <el-icon v-if="photoTag != 'love'" @click="star(photoInfo.photoUrl)">
                                         <Star />
                                     </el-icon>
-                                    <el-icon v-else @click="star(url)">
+                                    <el-icon v-else @click="star(photoInfo.photoUrl)">
                                         <StarFilled />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="分享" placement="bottom">
-                                    <el-icon @click="share(url)">
+                                    <el-icon @click="share(photoInfo.photoUrl)">
                                         <Share />
                                     </el-icon>
                                 </el-tooltip>
@@ -67,14 +54,23 @@
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
-                                     <el-icon><Delete /></el-icon>
-                                </el-tooltip>      
+                                    <el-icon>
+                                        <Delete />
+                                    </el-icon>
+                                </el-tooltip>
                             </p>
                         </figcaption>
                     </figure>
                 </div>
-
+                <!-- 分页功能 -->
+                <div class="pagination">
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        :current-page="photoPage.page" :page-sizes="[3, 6, 30]" :page-size="photoPage.size"
+                        background="false" small="false" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </div>
             </div>
+
         </div>
     </router-view>
 </template>
@@ -83,26 +79,78 @@
 import { ElMessage } from "element-plus";
 import request from "../../utils/axios"
 import useClipboard from 'vue-clipboard3'
-import { onBeforeMount, reactive } from "vue";
+import { computed, onBeforeMount, reactive, ref } from "vue";
 
 const { toClipboard } = useClipboard()
-const photoInfo = reactive([{
-    photoName: "",
-    photoTag: "",
-    photoUrl: "",
-    photoCreatTime: ""
-}])
-const photoPage = reactive({
-    size: "",
-    page: ""
+const select = reactive({//条件选择
+    photoInfo: {
+        photoTag: "",
+        photoType: "",
+        photoCreatTime: ""
+    }
 })
+const photoInfos = ref([])
+const photoPage = reactive({
+    size: 9,
+    page: 1
+})
+const total = ref()//图片总数
+// 条件选择下拉框
+const tagOptions = reactive([
+    { value: "love",label:"收藏" },
+])
+const typeOptions = reactive([
+    { value: "jpeg" },
+    { value: "jpg" },
+    { value: "png" },
+    { value: "gif" },
+])
+//快捷日期选择
+const shortcuts = [
+    {
+        text: '今天',
+        value: new Date(),
+    },
+    {
+        text: '昨天',
+        value: () => {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            return date
+        },
+    },
+    {
+        text: '一周前',
+        value: () => {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            return date
+        },
+    },
+]
+//图片预览的url数组
+const urls = computed(() => filterPhotoInfos.value.map(function (item) {
+    return item.photoUrl
+}))
+//图片条件查询
+const filterPhotoInfos = computed(() =>
+    photoInfos.value.filter(
+        (data) =>
+            data.photoTag.match(new RegExp(select.photoInfo.photoTag))
+            && data.photoType.match(new RegExp(select.photoInfo.photoType))
+            && data.photoCreatTime.match(new RegExp(select.photoInfo.photoCreatTime))
+    )
+)
+//清空日期选择后重置日期,结局日期选择器清空后值为null图片不显示的问题
+const reset=()=>{
+    console.log(select.photoInfo.photoCreatTime);
+    select.photoInfo.photoCreatTime!=null?select.photoInfo.photoCreatTime:""
+}
 onBeforeMount(() => {
     getUserPhoto()
-    console.log(photoInfo)
 })
 // 下载
 const downLoad = (url) => {
-    console.log(url);
     request.get("/photo/download/" + url.photoName).then((res) => {
         if (res == 200) {
             ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
@@ -112,20 +160,20 @@ const downLoad = (url) => {
     })
 }
 //收藏
-const star = (url) => {
-    if (photoInfo.photoTag == "love") {
-        ElMessage.error("该图片已经收藏了哟")
-    } else {
-        request.get("/photo/photoLove", photoInfo).then((res) => {
-            if (res.code == 200) {
-                ElMessage.success(res.data)
-                url.photoTag = "love"
-            } else {
-                ElMessage.error(res.msg)
-            }
-        })
-    }
-}
+// const star = (url) => {
+//     if (photoInfo.photoTag == "love") {
+//         ElMessage.error("该图片已经收藏了哟")
+//     } else {
+//         request.get("/photo/photoLove", photoInfo).then((res) => {
+//             if (res.code == 200) {
+//                 ElMessage.success(res.data)
+//                 url.photoTag = "love"
+//             } else {
+//                 ElMessage.error(res.msg)
+//             }
+//         })
+//     }
+// }
 //分享
 const share = async (url) => {
     try {
@@ -152,29 +200,26 @@ const tag = (url) => {
 
 //请求获取用户所有图片函数
 const getUserPhoto = () => {
-    request.get("/photo/queryByUsername", photoPage).then((res) => {
+    request.post("/photo/queryByUsername", photoPage).then((res) => {
         if (res.code == 200) {
-            for (let i = 0; i < res.data.length; i++) {
-                photoInfo[i].photoName = res.data[i].photoName
-                photoInfo[i].photoTag = res.data[i].photoTag
-                photoInfo[i].photoUrl = res.data[i].photoUrl
-                photoInfo[i].photoCreatTime = res.data[i].photoCreatTime
-            }
+            photoInfos.value = res.data.records
+            total.value = res.data.total
         } else {
             ElMessage.error(res.msg)
         }
     })
 }
 
-const tagOptions = reactive([
-    {value: "love"},
-    {value: "a"},
-    {value: "b"},
-])
-const timeOptions = reactive([])
-const typeOptions = reactive([])
+const handleSizeChange = (val) => {
+    photoPage.size = val
+    getUserPhoto()
+};
+const handleCurrentChange = (val) => {
+    photoPage.page = val
+    getUserPhoto()
+}
 
-const urls = [
+/* const urls = [
     'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554117163?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T100127Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b1996854cd92bf7b0f3e2be49fe98c311c84c10ea422379b12b1c2b68a78ec44',
     'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554173142?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101053Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=418dac75f7528869d35823e062a6d32f0c3ff801509ee3fad15ea602e64a027a',
     'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-a26f66658e014e06aa70e2753742bef3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101108Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=992b383c72c3b9c38ce93dccfec2a9dded95814ad73f47ba1913f039922be10a',
@@ -217,7 +262,7 @@ const urls = [
     'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
     'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
     'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-]
+] */
 </script>
 <style scoped>
 /* 引入图片预览效果的css */
@@ -248,12 +293,23 @@ const urls = [
 }
 
 .box {
-    height: 90vh;
+    height: 80vh;
     margin-top: 20px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
     overflow-y: auto;
+}
+
+/* 分页组件样式-居中 */
+.pagination {
+    margin: 10px auto;
+    display: flex;
+    justify-content: space-around;
+}
+
+.select {
+    width: 100%;
 }
 </style>

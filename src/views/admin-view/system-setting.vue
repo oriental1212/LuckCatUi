@@ -17,7 +17,7 @@
                         {{ userSetting.storageSize }}MB
                     </el-descriptions-item>
                     <el-descriptions-item label="用户最大使用容量">
-                        {{ userSetting.storageMaxUsed }}个
+                        {{ userSetting.storageMaxUsed }}MB
                     </el-descriptions-item>
                 </el-descriptions>
             </el-card>
@@ -29,7 +29,7 @@
                     <el-form-item label="存储空间总量(G)" prop="storageSpace">
                         <el-slider v-model="ruleForm.storageSpace" show-input :min="1" />
                     </el-form-item>
-                    <el-form-item label="存储图片总数" prop="storageSize">
+                    <el-form-item label="单个图片大小(MB)" prop="storageSize">
                         <el-input-number v-model="ruleForm.storageSize" :min="1"></el-input-number>
                     </el-form-item>
                 </el-form>
