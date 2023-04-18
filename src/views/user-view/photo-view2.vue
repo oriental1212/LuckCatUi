@@ -13,7 +13,7 @@
                         </el-col>
                         <el-col :span="5">
                             <el-date-picker v-model="select.photoInfo.photoCreatTime" type="time" size="large" value-format="YYYY-MM-DD"
-                                placeholder="请选择日期" :shortcuts="shortcuts" @blur="reset()" clearable/>
+                                placeholder="请选择日期" :shortcuts="shortcuts" @change="reset()" clearable/>
                         </el-col>
                         <el-col :span="5">
                             <el-select v-model="select.photoInfo.photoType" placeholder="图片类型" size="large" clearable>
@@ -31,15 +31,15 @@
                         <figcaption>
                             <p>
                                 <el-tooltip class="item" effect="dark" content="下载" placement="bottom">
-                                    <el-icon @click="downLoad(photoInfo.photoUrl)">
+                                    <el-icon @click="downLoad(photoInfo.photoName)">
                                         <download />
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="收藏" placement="bottom">
-                                    <el-icon v-if="photoTag != 'love'" @click="star(photoInfo.photoUrl)">
+                                    <el-icon v-if="photoInfo.photoTag != 'love'" @click="star(photoInfo)">
                                         <Star />
                                     </el-icon>
-                                    <el-icon v-else @click="star(photoInfo.photoUrl)">
+                                    <el-icon v-else @click="star(photoInfo)">
                                         <StarFilled />
                                     </el-icon>
                                 </el-tooltip>
@@ -49,7 +49,7 @@
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="标签" placement="bottom">
-                                    <el-icon @click="tag">
+                                    <el-icon @click="tag(photoInfo)">
                                         <price-tag />
                                     </el-icon>
                                 </el-tooltip>
@@ -89,6 +89,8 @@ const select = reactive({//条件选择
         photoCreatTime: ""
     }
 })
+//提交标签修改对象
+const photoFont = reactive({})
 const photoInfos = ref([])
 const photoPage = reactive({
     size: 9,
@@ -143,16 +145,18 @@ const filterPhotoInfos = computed(() =>
 )
 //清空日期选择后重置日期,结局日期选择器清空后值为null图片不显示的问题
 const reset=()=>{
-    console.log(select.photoInfo.photoCreatTime);
-    select.photoInfo.photoCreatTime!=null?select.photoInfo.photoCreatTime:""
+    console.log(select.photoInfo.photoCreatTime)
+    if(select.photoInfo.photoCreatTime == null){
+        select.photoInfo.photoCreatTime = ''
+    }
 }
 onBeforeMount(() => {
     getUserPhoto()
 })
 // 下载
-const downLoad = (url) => {
-    request.get("/photo/download/" + url.photoName).then((res) => {
-        if (res == 200) {
+const downLoad = (photoName) => {
+    request.get("/photo/download/"+photoName).then((res) => {
+        if (res.code == 200) {
             ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
         } else {
             ElMessage.error("出了点小状况，重新试试吧")
@@ -160,26 +164,30 @@ const downLoad = (url) => {
     })
 }
 //收藏
-// const star = (url) => {
-//     if (photoInfo.photoTag == "love") {
-//         ElMessage.error("该图片已经收藏了哟")
-//     } else {
-//         request.get("/photo/photoLove", photoInfo).then((res) => {
-//             if (res.code == 200) {
-//                 ElMessage.success(res.data)
-//                 url.photoTag = "love"
-//             } else {
-//                 ElMessage.error(res.msg)
-//             }
-//         })
-//     }
-// }
+const star = (photoInfo) => {
+    photoFont.photoName = photoInfo.photoName
+    photoFont.photoTag = photoInfo.photoTag
+    photoFont.photoUrl = photoInfo.photoUrl
+    photoFont.photoCreatTime = photoInfo.photoCreatTime
+    request.post("/photo/photoLove",photoFont).then((res) => {
+        if (res.code == "200") {
+            if(photoInfo.photoTag == "love"){
+                photoInfo.photoTag = "default"
+            }else if(photoInfo.photoTag == "default"){
+                photoInfo.photoTag = "love"
+            }
+            ElMessage.success(res.data)
+        } else {
+            ElMessage.error(res.msg)
+        }
+    })
+}
 //分享
 const share = async (url) => {
     try {
-        await toClipboard(url.photoUrl)
+        await toClipboard(url)
         ElMessage.success({
-            message: "复制成功^-^,图片地址为：" + url.photoUrl,
+            message: "复制成功^-^,图片地址为：" + url,
             duration: 2000
         })
     } catch (e) {
@@ -187,8 +195,12 @@ const share = async (url) => {
     }
 }
 //更改标签
-const tag = (url) => {
-    request.get("/photo/modifyLabel", url).then((res) => {
+const tag = (photoInfo) => {
+    photoFont.photoName = photoInfo.photoName
+    photoFont.photoTag = photoInfo.photoTag
+    photoFont.photoUrl = photoInfo.photoUrl
+    photoFont.photoCreatTime = photoInfo.photoCreatTime
+    request.get("/photo/modifyLabel", photoFont).then((res) => {
         if (res.code == 200) {
             ElMessage.success(res.data)
             getUserPhoto()
@@ -219,50 +231,6 @@ const handleCurrentChange = (val) => {
     getUserPhoto()
 }
 
-/* const urls = [
-    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554117163?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T100127Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b1996854cd92bf7b0f3e2be49fe98c311c84c10ea422379b12b1c2b68a78ec44',
-    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-1677554173142?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101053Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=418dac75f7528869d35823e062a6d32f0c3ff801509ee3fad15ea602e64a027a',
-    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-a26f66658e014e06aa70e2753742bef3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T101108Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=992b383c72c3b9c38ce93dccfec2a9dded95814ad73f47ba1913f039922be10a',
-    'http://82.157.162.80:9000/photo/2023/4/12/2023-04-12-7f9a58e2582bb4a1e70f87f4c22b554_edited?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20230412%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230412T133430Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3f1a0c320f826bc11b0109f6e8c664c655ac6875b62e49c4c90ed231c47a5783',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-] */
 </script>
 <style scoped>
 /* 引入图片预览效果的css */
