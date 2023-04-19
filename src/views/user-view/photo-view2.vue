@@ -54,7 +54,7 @@
                                     </el-icon>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
-                                    <el-icon>
+                                    <el-icon @click="deletePhoto(photoInfo)">
                                         <Delete />
                                     </el-icon>
                                 </el-tooltip>
@@ -155,12 +155,16 @@ onBeforeMount(() => {
 })
 // 下载
 const downLoad = (photoName) => {
-    request.get("/photo/download/"+photoName).then((res) => {
-        if (res.code == 200) {
-            ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
-        } else {
-            ElMessage.error("出了点小状况，重新试试吧")
-        }
+    request.get("/photo/download/"+photoName,{responseType: "blob"}).then((res) => {
+        let blob = new Blob([res.data])
+        let _url = URL.createObjectURL(blob)
+        let a = document.createElement("a")
+        a.setAttribute("download", photoName+".png")
+        a.setAttribute("href", _url)
+        a.click()
+        ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
+    }).catch(() => {
+        ElMessage.error("出了点小状况，重新试试吧")
     })
 }
 //收藏
@@ -202,6 +206,21 @@ const tag = (photoInfo) => {
     photoFont.photoCreatTime = photoInfo.photoCreatTime
     request.get("/photo/modifyLabel", photoFont).then((res) => {
         if (res.code == 200) {
+            ElMessage.success(res.data)
+            getUserPhoto()
+        } else {
+            ElMessage.error(res.msg)
+        }
+    })
+}
+//删除
+const deletePhoto = (photoInfo) => {
+    photoFont.photoName = photoInfo.photoName
+    photoFont.photoTag = photoInfo.photoTag
+    photoFont.photoUrl = photoInfo.photoUrl
+    photoFont.photoCreatTime = photoInfo.photoCreatTime
+    request.post("/photo/deletePhoto", photoFont).then((res) => {
+        if(res.code == 200){
             ElMessage.success(res.data)
             getUserPhoto()
         } else {

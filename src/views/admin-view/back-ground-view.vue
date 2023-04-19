@@ -35,9 +35,9 @@
                     <template #header>
                         <div class="card-header">
                             <el-icon>
-                                <PictureFilled />
+                                <ChatSquare />
                             </el-icon>
-                            <span style="color:#fd0221">已用容量</span>
+                            <span style="color:#fd0221">作者想说的话</span>
                         </div>
                     </template>
                     <div class="card-body">{{ state.total_space }}</div>
@@ -119,7 +119,7 @@ const option = ref({
 const state = reactive({
     total_user: "total_user",
     total_photo: "total_photo",
-    total_space: "total_space",
+    total_space: "你真以为你能忘了，说不定某一照片某一话语某一物什某一刹那，花开成海，思念成灾",
     personal_photo: "personal_photo",
     personal_space: "personal_space",
 })
@@ -129,7 +129,6 @@ request.get("/echarts").then((res) => {
     if (res.code == 200) {
         state.total_user=res.data.totalUser
         state.total_photo=res.data.totalPhoto
-        state.total_space=res.data.totalSpace
         barTitle.value=res.data.barTitle
         barData.value=res.data.barData
     }else if(res.code==500){
@@ -163,6 +162,8 @@ request.get("/echarts").then((res) => {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    font-size: 20px;
+    font-family: 'Helvetica Neue',Helvetica,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','微软雅黑',Arial,sans-serif;
 }
 
 .chart {

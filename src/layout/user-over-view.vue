@@ -6,7 +6,6 @@
                     :router="true" @select="select" text-color="#fff" :ellipsis="false">
                     <div class="logo">LuckCat</div>
                     <el-menu-item index="photo-view2">图库</el-menu-item>
-                    <el-menu-item index="">管理</el-menu-item>
                     <div style="flex-grow: 1;"></div>
                     <el-menu-item index="user-home"><el-icon>
                             <UploadFilled />

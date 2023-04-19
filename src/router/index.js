@@ -90,5 +90,17 @@ const router = createRouter({
     routes,
 });
 
+
+router.beforeEach((to, from, next) => {
+    if (to.path === "/authen") return next();
+    if (to.path === "/findpassword") return next();
+    //获取token
+    const Lucktoken = localStorage.LuckCat
+    if (!Lucktoken){
+        return next("/authen")
+    }
+    next()
+})
+
 //导出路由
 export default router;
