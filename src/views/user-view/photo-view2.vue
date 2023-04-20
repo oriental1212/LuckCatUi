@@ -31,7 +31,7 @@
                         <figcaption>
                             <p>
                                 <el-tooltip class="item" effect="dark" content="下载" placement="bottom">
-                                    <el-icon @click="downLoad(photoInfo.photoName)">
+                                    <el-icon @click="downLoad(photoInfo.photoName,photoInfo.photoType)">
                                         <download />
                                     </el-icon>
                                 </el-tooltip>
@@ -154,15 +154,17 @@ onBeforeMount(() => {
     getUserPhoto()
 })
 // 下载
-const downLoad = (photoName) => {
+const downLoad = (photoName,photoType) => {
     request.get("/photo/download/"+photoName,{responseType: "blob"}).then((res) => {
-        let blob = new Blob([res.data])
-        let _url = URL.createObjectURL(blob)
+        ElMessage.success("图片正在下载,稍等一下")
+        let blob = new Blob([res])
+        let _url = URL.createObjectURL(blob)  
         let a = document.createElement("a")
-        a.setAttribute("download", photoName+".png")
+        let name=Date.now()+"."+photoType
+        a.setAttribute("download",name)
         a.setAttribute("href", _url)
         a.click()
-        ElMessage.success("开始下载了^-^ 喝杯茶休息休息吧~")
+        a.remove()
     }).catch(() => {
         ElMessage.error("出了点小状况，重新试试吧")
     })
