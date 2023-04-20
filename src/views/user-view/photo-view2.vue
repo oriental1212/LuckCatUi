@@ -158,7 +158,7 @@ const downLoad = (photoName,photoType) => {
     request.get("/photo/download/"+photoName,{responseType: "blob"}).then((res) => {
         ElMessage.success("图片正在下载,稍等一下")
         let blob = new Blob([res])
-        let _url = URL.createObjectURL(blob)  
+        let _url = URL.createObjectURL(blob)
         let a = document.createElement("a")
         let name=Date.now()+"."+photoType
         a.setAttribute("download",name)

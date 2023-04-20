@@ -74,7 +74,6 @@ const userPhotoSize = ref()
 request.post("/setting/getSetting").then(res => {
     if (res.code == 200) {
         userPhotoSize.value = res.data.storageSize
-        console.log("获取成功，单个大小为：", userPhotoSize.value);
     } else {
         console.log("获取失败")
     }
