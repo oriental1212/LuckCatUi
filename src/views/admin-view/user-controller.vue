@@ -46,6 +46,17 @@
             <el-table-column align="right">
                 <template #default="scope" >
                     <el-popconfirm v-if="scope.row.authority == 'user'" width="220" confirm-button-text="确认" cancel-button-text="取消" :icon="InfoFilled"
+                        icon-color="#626AEF" title="确定要设置该用户未为管理员吗吗?" @confirm="admin(scope.row)">
+                        <template #reference>
+                            <el-button type="success">
+                                <el-icon style="margin-right:5px ;">
+                                    <UserFilled />
+                                </el-icon>
+                                管理员
+                            </el-button>
+                        </template>
+                    </el-popconfirm>
+                    <el-popconfirm v-if="scope.row.authority == 'user'" width="220" confirm-button-text="确认" cancel-button-text="取消" :icon="InfoFilled"
                         icon-color="#626AEF" title="确定要禁用该用户吗?" @confirm="disable(scope.row)">
                         <template #reference>
                             <el-button type="danger">
@@ -163,6 +174,29 @@ const getTableData = () => {
             })
         }
         fullscreenLoading.value = false
+    })
+}
+//设置为管理员
+const admin = (row) => {
+    request.get("/user/adminUser", {
+        params: {
+            username: row.username
+        }
+    }).then((res) => {
+        if (res.code == 200) {
+            getTableData()
+            ElNotification.success({
+                title: '成功',
+                message: res.msg,
+                duration: 2000
+            })
+        } else if (res.code == 500) {
+            ElNotification.error({
+                title: '失败',
+                message: res.msg,
+                duration: 3000
+            })
+        }
     })
 }
 //禁用账户

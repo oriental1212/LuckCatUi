@@ -27,6 +27,7 @@
                                 v-model="ossInfo.ossState"
                                 active-text="启用"
                                 inactive-text="停用"
+                                :before-change="switchChange.bind(this,ossInfo)"
                             />
                         </div>
                     </template>
@@ -64,21 +65,25 @@ onBeforeMount(() => {
 //控制dialog
 const Visible = ref(false)
 //获取的oss数据
-let ossInfos = reactive([
-    {
-        ossName: "Minio",
-        ossBucketNames: [
-            "photo","user"
-        ],
-        ossState: true
-    },
-])
+const ossInfos = ref([])
+// let ossInfos = reactive([
+//     {
+//         ossName: "Minio",
+//         ossBucketNames: [
+//             "photo","user"
+//         ],
+//         ossState: true
+//     },
+// ])
 //提交修改数据的对象
 const confirmOss = reactive({
     ossName: "",
     accessKey: "",
     secretKey: "",
     url: ""
+})
+onBeforeMount(() => {
+    getOssInfo()
 })
 //提交修改数据
 const confirmOssData = (ossName) => {
@@ -90,21 +95,44 @@ const confirmOssData = (ossName) => {
             ElMessage.error(res.data)
         }
     })
+    getOssInfo()
     Visible.value = false
     confirmOss.accessKey = ""
     confirmOss.secretKey = ""
     confirmOss.ossName = ""
     confirmOss.url = ""
 }
-
+//获取oss数据
 const getOssInfo = () => {
     request.get("/oss/getAllOssInfo").then(res => {
         if(res.code == 200){
-            ossInfos = res.data
+            res.data.forEach((one) => {
+                JSON.parse(one.ossState)
+            })
+            ossInfos.value = res.data
         }else{
             ElMessage.error(res.msg)
         }
     })
+}
+const switchChange = (oss) => {
+    let state = !oss.ossState
+    request.get("/oss/changeOssInfo/"+ oss.ossName +"/"+ state.toString()).then(res => {
+        if(res.code == 200 && oss.ossState == false){
+            ElMessage.success("启用成功")
+            oss.ossState = true
+            return true
+        }
+        if(res.code == 200 && oss.ossState == true){
+            ElMessage.success("停用成功")
+            oss.ossState = false
+            return true
+        }else{
+            ElMessage.error("设置失败，请稍后重试")
+            return false
+        }
+    })
+    return false
 }
 
 </script>

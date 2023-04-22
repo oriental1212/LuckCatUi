@@ -10,19 +10,19 @@
                         </el-icon>
                         <span>总览</span>
                     </el-menu-item>
-                    <el-menu-item index="usercontroller">
+                    <el-menu-item v-if="userAuthority == 'admin'" index="usercontroller">
                         <el-icon>
                             <document />
                         </el-icon>
                         <span>用户管理</span>
                     </el-menu-item>
-                    <el-menu-item index="objectstorage">
+                    <el-menu-item v-if="userAuthority == 'admin'" index="objectstorage">
                         <el-icon>
                             <setting />
                         </el-icon>
                         <span>OSS管理</span>
                     </el-menu-item>
-                    <el-menu-item index="systemsetting">
+                    <el-menu-item v-if="userAuthority == 'admin'" index="systemsetting">
                         <el-icon><setting /></el-icon>
                         <span>图库设置</span>
                     </el-menu-item>
@@ -117,6 +117,7 @@ import { reactive, ref } from 'vue';
 const drawer = ref(false)
 const store = useStore()
 const personalInfoChange = ref(true)
+const userAuthority = ref()
 
 const userRevise = reactive({
 })
@@ -126,6 +127,13 @@ const userReviseConfirm = reactive({
 const buttonvalue = reactive({
     cancel: "关闭",
     confirm: "修改"
+})
+//获取用户权限
+request("user/getUserAuthority").then((res) => {
+    if(res.code == 200){
+        userAuthority.value = res.data
+    }
+    console.log(userAuthority.value)
 })
 
 userRevise.avatar = JSON.parse(localStorage.getItem("personInfo")).avatarAddress
