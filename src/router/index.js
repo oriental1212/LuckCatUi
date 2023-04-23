@@ -90,6 +90,7 @@ const router = createRouter({
     routes,
 });
 
+let EXPIRESTIME = 604800000
 
 router.beforeEach((to, from, next) => {
     if (to.path === "/authen") return next();
@@ -98,6 +99,15 @@ router.beforeEach((to, from, next) => {
     const Lucktoken = localStorage.LuckCat
     if (!Lucktoken){
         return next("/authen")
+    }else{
+        let date = new Date().getTime();
+        if(date - localStorage.startTime > EXPIRESTIME){
+            localStorage.removeItem("LuckCat")
+            localStorage.removeItem("personInfo")
+            return next("/authen")
+        }else{
+            next()
+        }
     }
     next()
 })

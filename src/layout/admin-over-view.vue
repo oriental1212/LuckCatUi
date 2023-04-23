@@ -133,7 +133,6 @@ request("user/getUserAuthority").then((res) => {
     if(res.code == 200){
         userAuthority.value = res.data
     }
-    console.log(userAuthority.value)
 })
 
 userRevise.avatar = JSON.parse(localStorage.getItem("personInfo")).avatarAddress
@@ -192,7 +191,6 @@ const beforeAvatarUpload = (rawFile) => {
     return true
 }
 const handleProgress = (event, file) => {
-    console.log(event)
     let fd = new FormData
     fd.append('file', file.raw)
     request.post("/user/avatarChange", fd).then((res) => {
@@ -239,7 +237,6 @@ const handleCommand = (command) => {
             }
         ).then(() => {
             request.get("/user/logout").then((res) => {
-                console.log(res)
                 if (res.code == 200) {
                     ElMessage({
                         type: 'success',

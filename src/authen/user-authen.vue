@@ -124,6 +124,7 @@ const registerClick = (event) => {
                 })
                 localStorage.setItem(res.data[0].tokenName, res.data[0].tokenValue)
                 localStorage.setItem("personInfo", JSON.stringify(res.data[1]))
+                localStorage.setItem("startTime",new Date().getTime())
                 store.commit("changeloginflage")
                 router.push({ name: 'user-home' })
             }
@@ -148,6 +149,7 @@ const loginClick = (event) => {
                 })
                 localStorage.setItem(res.data[0].tokenName, res.data[0].tokenValue)
                 localStorage.setItem("personInfo", JSON.stringify(res.data[1]))
+                localStorage.setItem("startTime",new Date().getTime())
                 store.commit("changeloginflage")
                 router.push({ name: 'user-home' })
             }
