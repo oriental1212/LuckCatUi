@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useStore } from "vuex";
 
 const routes = [
     {
@@ -91,6 +92,7 @@ const router = createRouter({
 });
 
 let EXPIRESTIME = 604800000
+const store = useStore()
 
 router.beforeEach((to, from, next) => {
     if (to.path === "/authen") return next();
@@ -104,6 +106,7 @@ router.beforeEach((to, from, next) => {
         if(date - localStorage.startTime > EXPIRESTIME){
             localStorage.removeItem("LuckCat")
             localStorage.removeItem("personInfo")
+            store.commit("changeloginflage")
             return next("/authen")
         }else{
             next()
